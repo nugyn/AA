@@ -18,10 +18,16 @@ public class IncidenceMatrix extends AbstractAssocGraph
     private int j = 0; // to traverse arrPair 
     private String vertices[] = new String[1];
     private MyPair arrPair[] = new MyPair[1];
-    private int matrix[][] = new int[4][4];
+    private int incidenceMatrix[][] = new int[4][4];
 
     public IncidenceMatrix() {
-        
+        for(int x=0; i < vertices.length; i++)
+        {
+         for(int y=0; j < arrPair.length; j++)
+         {
+            incidenceMatrix[i][j] = arrPair[j].getEdgeWeight();
+         }   
+        }
     	// Implement me!
     } // end of IncidentMatrix()
 
@@ -46,7 +52,7 @@ public class IncidenceMatrix extends AbstractAssocGraph
 	public int getEdgeWeight(String srcLabel, String tarLabel) {
 		// Implement me!
         for(MyPair pair: arrPair) {
-            if(pair.getKey().compareTo(srcLabel+tarLabel)) {
+            if(pair.getKey().equals(srcLabel+tarLabel)) {
                 return pair.getValue();
             }
         }
@@ -57,26 +63,46 @@ public class IncidenceMatrix extends AbstractAssocGraph
 
 	public void updateWeightEdge(String srcLabel, String tarLabel, int weight) {
         String findLabel = srcLabel + tarLabel;
-        for(int i =0; i < arrPair.length; i++)
+        for(int i = 0; i < arrPair.length; i++)
         {
-            if(arrPair[i].getKey().equals())
+            if(arrPair[i].getKey().equals(findLabel))
+            {
+                MyPair newPair = new MyPair(findLabel, weight);
+                arrPair[i] = newPair;  
+            }
         }
 
     } // end of updateWeightEdge()
 
+//MyPair leftHand[] = Arrays.copyOfRange(arrPair, 0, i);
+//MyPair rightHand[] = Arrays.copyOfRange(arrPair, i+1, arrPair.length);
 
     public void removeVertex(String vertLabel) {
-        // Implement me!
-        for(String vertext : vertices) { 
-            if 
+        // One of the approach using O(n)
+        // int removeIndex;
+        // for(int i = 0; i < vertices.length; i++) { 
+        //     if(vertices[i].equals(vertLabel)) {
+        //         removeIndex = i;
+        //     }
+        // }
+        int removeIndex = Arrays.toString(vertices).indexOf(vertLabel);
+        String leftHand[] = Arrays.copyOfRange(vertices,0,i);
+        String rightHand[] = Arrays.copyOfRange(vertices,i+1,vertices.length);
+        vertices =  Arrays.copyOf(vertices,vertices.length-1);
+        for(int i = 0; i < vertices.length; i++) { 
+            if(i < leftHand.length) {
+                vertices[i] = leftHand[i];
+            } else {
+                vertices[i] = rightHand[i];
+            }
         }
     } // end of removeVertex()
 
 
 	public List<MyPair> inNearestNeighbours(int k, String vertLabel) {
         List<MyPair> neighbours = new ArrayList<MyPair>();
-
-        // Implement me!
+        
+        
 
         return neighbours;
     } // end of inNearestNeighbours()
@@ -84,7 +110,7 @@ public class IncidenceMatrix extends AbstractAssocGraph
 
     public List<MyPair> outNearestNeighbours(int k, String vertLabel) {
         List<MyPair> neighbours = new ArrayList<MyPair>();
-
+            
         // Implement me!
 
         return neighbours;
