@@ -100,22 +100,25 @@ public class IncidenceMatrix extends AbstractAssocGraph
                 removeIndex = i;
             }
         }
+        System.out.println("Remove index:" + removeIndex);
 
-        String originalArray = vertices.clone();
-        
+        String originalArray[] = vertices.clone();
+        boolean found = false;
         for(int i=0; i< originalArray.length -1; i++)
         {
-            boolean found = false;
             if(i == removeIndex) {
-                pass;
+                found=true;
             } else {
-                vertices[i] = originalArray[i];
+                if(found) { 
+                    vertices[i-1] = originalArray[i];
+                } else {
+                    vertices[i] = originalArray[i];
+                }
             }
-           
         }
+        vertices =  Arrays.copyOf(vertices,vertices.length-1);
         // int removeIndex = String.join("",Arrays.copyOfRange(vertices,0,vertices.length - 1)).indexOf(vertLabel); 
         // convert anything from 0 to lastIndex - 1 to a string;
-        System.out.println("Remove index:" + removeIndex);
         // String leftHand[] = Arrays.copyOfRange(vertices,0,removeIndex);
         // String rightHand[] = Arrays.copyOfRange(vertices,removeIndex+1,vertices.length-1);
         
