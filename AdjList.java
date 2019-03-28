@@ -14,6 +14,8 @@ public class AdjList extends AbstractAssocGraph
     /**
 	 * Contructs empty graph.
 	 */
+    
+
     public AdjList() {
     	 // Implement me!
 
@@ -21,7 +23,7 @@ public class AdjList extends AbstractAssocGraph
 
 
     public void addVertex(String vertLabel) {
-        // Implement me!
+       
     } // end of addVertex()
 
 
