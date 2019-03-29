@@ -95,6 +95,7 @@ public class IncidenceMatrix extends AbstractAssocGraph
     public void removeVertex(String vertLabel) {
         // One of the approach using O(n)
         int removeIndex = -1;
+        String originalArray[] = vertices.clone();
         for(int i = 0; i < vertices.length-1; i++) { 
             if(vertices[i].equals(vertLabel)) {
                 removeIndex = i;
@@ -102,7 +103,6 @@ public class IncidenceMatrix extends AbstractAssocGraph
         }
         System.out.println("Remove index:" + removeIndex);
 
-        String originalArray[] = vertices.clone();
         boolean found = false;
         for(int i=0; i< originalArray.length -1; i++)
         {
@@ -116,16 +116,15 @@ public class IncidenceMatrix extends AbstractAssocGraph
                 }
             }
         }
-        vertices =  Arrays.copyOf(vertices,vertices.length-1);
+        vertices =  (removeIndex != -1) ? 
+        Arrays.copyOf(vertices,vertices.length-1) : vertices;
         // int removeIndex = String.join("",Arrays.copyOfRange(vertices,0,vertices.length - 1)).indexOf(vertLabel); 
         // convert anything from 0 to lastIndex - 1 to a string;
         // String leftHand[] = Arrays.copyOfRange(vertices,0,removeIndex);
         // String rightHand[] = Arrays.copyOfRange(vertices,removeIndex+1,vertices.length-1);
         
-        System.out.println("test");
         // System.out.println("Lefthand: " + leftHand.toString());
         // System.out.println("Righthand: " + rightHand.toString());
-        System.out.println("test3");
 
         // vertices =  Arrays.copyOf(vertices,vertices.length-2);
         // System.out.println("vertices: " + vertices.toString());
