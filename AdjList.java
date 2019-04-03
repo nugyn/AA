@@ -18,104 +18,49 @@ public class AdjList extends AbstractAssocGraph
     /* Reference to the head of the node */
     protected Node mHead; 
 
-    /* A dictionary of the sizes of the lists*/
-    protected Map<String, Int> lengthDictionary = new HashMap();
+    
    
-   
-    /* Array of Linkedlists   */
-    protected Node arrayAdjList = new AdjList();
-
-    /* Array of vertices*/
+    /* Array of NODES ie ArrayLists*/
     int i = 0;
-    protected String vertices[] = new vertices[i];
-
+    protected Node headers[] = new Node[i+1];
     
-    
+    public AdjList(){
 
-    public AdjList() {
-         mHead = null;
-         mlength = 0;
-         lengthDictionary(null, 0);
-        
-    } // end of AdjList()
-
+        //....
+    }
 
     public void addVertex(String vertLabel) {
-    
-        verticles[i] = vertLabel;
-        lengthDictionary.entry(vertLabel, 1);
+        /* Make a new linklist */
+        System.out.println("Called");
+        Node head = new Node(vertLabel);
+        headers[i] = head;
         i++;
-
-        Node newNode = new Node();
-        mHead = newNode();
-
-        arrayAdjList
-        
+        headers = Arrays.copyOf(headers, i+1);
     } // end of addVertex()
 
 
     public void addEdge(String srcLabel, String tarLabel, int weight) {
-        
-        String newValue = (String)weight;
-        String head = srcLabel;
-        String keyVert = tarLabel;
-
-        Node newNode = Node(vertLabel);
-
-        if(mHead == null){
-            mHead = newNode;
-          }
-        else{
-           newNode.setNext(mHead); //set the reference next element 
-           mHead = newNode;
-          }
-
-        mlength++; //increase size of list
-
-        // list is not empty
-
-            Node currNode = mHead;
-            for (int i = 0; i < mLength; ++i) {
-                if(keyVert.equalTo(currNode.getValue())){
-                 String insertValue = keyVert + ", "+ newValue;
-                 currNode(insertValue);
-                 System.out.println("Added edge to vertice:" + keyVert);
+        /* Update the Head, and Tail*/
+        for(int i = 0; i < headers.length - 1; i++) {
+            System.out.println("Checking header: " + headers[i].getLabel());
+            if(headers[i].getLabel().equals(srcLabel)){
+                Node currNode = headers[i];
+                while(currNode.getNext() != null) {
+                    /* This is the tail */
+                    currNode = currNode.getNext();
                 }
-                currNode = currNode.getNext();
-            
-    
-    
-
-    } // end of addEdge()
+                Node newNode = new Node(tarLabel);
+                newNode.setWeight(weight);
+                newNode.setPrev(headers[i]);
+                headers[i].setNext(newNode); // * MODIFY, doesn't add EDGE
+            }
+        }
+    }
+     // end of addEdge()
 
 
     public int getEdgeWeight(String srcLabel, String tarLabel) {
-		    // Implement me!
-
-            /*
-
-            1st Traverse Linked List
-            Find the vertice (head of the linked list)
-                Traverse through until you find the target edge
-                    Update the value inside the node
-
-            */
-
-            String head = srcLabel;
-            String keyVert = tarLavel;
-
-            for(int i=0; i < mLength; i++){
-                Node currNode = mHead;
-
-            }
-
-
-
-
-
-
-
-		    // update return value
+	
 		    return EDGE_NOT_EXIST;
     } // end of existEdge()
 
@@ -150,42 +95,77 @@ public class AdjList extends AbstractAssocGraph
 
     public void printVertices(PrintWriter os) {
         // Implement me!
+        for(int i = 0; i < headers.length - 1; i++) {
+            System.out.printf("%s\n", headers[i].getLabel());
+        }
     } // end of printVertices()
 
 
     public void printEdges(PrintWriter os) {
         // Implement me!
+        for(int i = 0; i < headers.length - 1; i++) {
+            System.out.println("vertex:" + headers[i].getLabel());
+            while(headers[i].getNext() != null) {
+                System.out.println("first item: " + headers[i].getLabel());
+                if(headers[i].getWeight() != 0) {
+                    System.out.printf(" %s %d", headers[i].getLabel(), headers[i].getWeight());
+                } else {
+                    System.out.printf("%s", headers[i].getLabel());
+               }
+               headers[i] = headers[i].getNext();
+            }
+            System.out.println();
+        }
     } // end of printEdges()
 
 
     protected class Node {
     
-        protected String mValue; //Stored value of the node
-
+        protected String label; // Stored value of the node
+        protected Node mPrev; // Stored the value of the previous node
         protected Node mNext; //Reference to the next node
+        protected int weight;
 
         public Node(String value) {
-            mValue = value;
+            label = value;
             mNext = null;
+            mPrev = null;
         }
 
-        public int getValue() {
-            return mValue;
+        public String getLabel() {
+            return label;
         }
 
+        public int getWeight() {
+            return weight;
+        }
+
+        public Node getPrev() {
+            return mPrev;
+        }
 
         public Node getNext() {
             return mNext;
         }
 
 
-        public void setValue(int value) {
-            mValue = value;
+        public void setWeight(int value) {
+            weight = value;
         }
 
 
         public void setNext(Node next) {
             mNext = next;
+        }
+
+        public void setPrev(Node prev) {
+            mPrev = prev;
+        }
+
+        @Override
+        public String toString() {
+            return String.format("Label: %s\n Weight: %d Next: %s\n Previous: \n", this.label, this.weight, 
+            this.mNext.label, this.mPrev.label);
         }
     }
 } // end of class AdjList
