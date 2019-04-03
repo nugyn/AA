@@ -38,7 +38,6 @@ public class AdjList extends AbstractAssocGraph
         headers = Arrays.copyOf(headers, i+1);
     } // end of addVertex()
 
-
     public void addEdge(String srcLabel, String tarLabel, int weight) {
         /* Update the Head, and Tail*/
         for(int i = 0; i < headers.length - 1; i++) {
@@ -49,10 +48,16 @@ public class AdjList extends AbstractAssocGraph
                     /* This is the tail */
                     currNode = currNode.getNext();
                 }
+
+                System.out.println("[+] we are at " + currNode.getLabel());
+                if(currNode.getPrev() != null)
+                    System.out.println("[+] The previous is " + currNode.getPrev().getLabel());
+
                 Node newNode = new Node(tarLabel);
                 newNode.setWeight(weight);
-                newNode.setPrev(headers[i]);
-                headers[i].setNext(newNode); // * MODIFY, doesn't add EDGE
+                newNode.setPrev(currNode);
+                currNode.setNext(newNode); 
+                break;
             }
         }
     }
@@ -104,17 +109,16 @@ public class AdjList extends AbstractAssocGraph
     public void printEdges(PrintWriter os) {
         // Implement me!
         for(int i = 0; i < headers.length - 1; i++) {
-            System.out.println("vertex:" + headers[i].getLabel());
-            while(headers[i].getNext() != null) {
-                System.out.println("first item: " + headers[i].getLabel());
-                if(headers[i].getWeight() != 0) {
-                    System.out.printf(" %s %d", headers[i].getLabel(), headers[i].getWeight());
+            Node currNode = headers[i];
+            while(currNode != null) {
+                if(currNode.getWeight() != 0) {
+                    System.out.printf(" %s %d", currNode.getLabel(), currNode.getWeight());
                 } else {
-                    System.out.printf("%s", headers[i].getLabel());
-               }
-               headers[i] = headers[i].getNext();
+                    System.out.printf("%s", currNode.getLabel());
+                }
+                currNode = currNode.getNext();
             }
-            System.out.println();
+            System.out.println("");
         }
     } // end of printEdges()
 

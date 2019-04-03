@@ -116,7 +116,7 @@ public class IncidenceMatrix extends AbstractAssocGraph
                 }
             }
         }
-        vertices =  (removeIndex != -1) ? 
+        vertices =  (removeIndex != -1) ?  
         Arrays.copyOf(vertices,vertices.length-1) : vertices;
         // int removeIndex = String.join("",Arrays.copyOfRange(vertices,0,vertices.length - 1)).indexOf(vertLabel); 
         // convert anything from 0 to lastIndex - 1 to a string;
