@@ -17,16 +17,12 @@ public class AdjList extends AbstractAssocGraph
 
     /* Reference to the head of the node */
     protected Node mHead; 
-
-    
-   
     /* Array of NODES ie ArrayLists*/
     int i = 0;
     protected Node headers[] = new Node[i+1];
     
     public AdjList(){
-
-        //....
+        //
     }
 
     public void addVertex(String vertLabel) {
@@ -65,13 +61,23 @@ public class AdjList extends AbstractAssocGraph
 
 
     public int getEdgeWeight(String srcLabel, String tarLabel) {
-	
+
 		    return EDGE_NOT_EXIST;
     } // end of existEdge()
 
 
     public void updateWeightEdge(String srcLabel, String tarLabel, int weight) {
         // Implement me!
+        for(int i = 0; i < headers.length - 1; i++) {
+            if(headers[i].getLabel().equals(srcLabel)) {
+                Node currNode = headers[i];
+                while(!currNode.getLabel().equals(tarLabel)) {
+                    currNode = currNode.getNext();
+                }
+                currNode.setWeight(weight);
+                break;
+            }
+        }
     } // end of updateWeightEdge()
 
 
@@ -112,13 +118,11 @@ public class AdjList extends AbstractAssocGraph
             Node currNode = headers[i];
             while(currNode != null) {
                 if(currNode.getWeight() != 0) {
-                    System.out.printf(" %s %d", currNode.getLabel(), currNode.getWeight());
-                } else {
-                    System.out.printf("%s", currNode.getLabel());
+                    System.out.printf("%s %s %d",headers[i].getLabel(), currNode.getLabel(), currNode.getWeight());
+                    System.out.println("");
                 }
                 currNode = currNode.getNext();
             }
-            System.out.println("");
         }
     } // end of printEdges()
 
