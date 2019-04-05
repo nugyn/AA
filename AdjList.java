@@ -29,6 +29,7 @@ public class AdjList extends AbstractAssocGraph
         /* Make a new linklist */
         System.out.println("Called");
         Node head = new Node(vertLabel);
+        head.setHeader();
         headers[i] = head;
         i++;
         headers = Arrays.copyOf(headers, i+1);
@@ -82,9 +83,52 @@ public class AdjList extends AbstractAssocGraph
 
 
     public void removeVertex(String vertLabel) {
-        // Implement me!
+        int removeIndex = -1;
+        Node originalHeaders[] = headers.clone();
+        boolean found = false;
+
+        for(int i = 0; i < headers.length-1; i++) { 
+            System.out.println("[...] Headers: " + headers[i].getLabel());
+            if(headers[i].getLabel().equals(vertLabel)) {
+                removeIndex = i;
+            }
+            removeEdge(headers[i],vertLabel);
+        }
+        for(int i=0; i< originalHeaders.length -1; i++)
+        {
+            if(i == removeIndex) {
+                found=true;
+            } else {
+                if(found) { 
+                    headers[i-1] = originalHeaders[i];
+                } else {
+                    headers[i] = originalHeaders[i];
+                }
+            }
+        }
+        if(removeIndex != -1) {
+            headers = Arrays.copyOf(headers,headers.length-1);
+            i--;
+        }
     } // end of removeVertex()
 
+    public void removeEdge(Node header, String vertLabel) {
+        /* Loop throught the header and delete vertLabel */
+        while(header.getNext()!= null) { 
+            System.out.println("[....] We are in label: " + header.getLabel());
+            header = header.getNext();
+        }
+        if(header.getLabel().equals(vertLabel) && !header.isHeader()) {
+            Node nextNode = header.getNext();
+            Node prevNode = header.getPrev();
+            if(nextNode != null) {
+                nextNode.setPrev(prevNode);
+                prevNode.setNext(nextNode);
+            } else {
+                prevNode.setNext(null);
+            }
+        }
+    }
 
     public List<MyPair> inNearestNeighbours(int k, String vertLabel) {
         List<MyPair> neighbours = new ArrayList<MyPair>();
@@ -133,11 +177,17 @@ public class AdjList extends AbstractAssocGraph
         protected Node mPrev; // Stored the value of the previous node
         protected Node mNext; //Reference to the next node
         protected int weight;
+        protected boolean isHeader = false;
 
         public Node(String value) {
             label = value;
             mNext = null;
             mPrev = null;
+        }
+
+        public boolean setHeader() {
+            this.isHeader = true;
+            return true;
         }
 
         public String getLabel() {
@@ -174,6 +224,10 @@ public class AdjList extends AbstractAssocGraph
         public String toString() {
             return String.format("Label: %s\n Weight: %d Next: %s\n Previous: \n", this.label, this.weight, 
             this.mNext.label, this.mPrev.label);
+        }
+
+        public boolean isHeader(){
+            return isHeader;
         }
     }
 } // end of class AdjList
