@@ -14,11 +14,12 @@ public class IncidenceMatrix extends AbstractAssocGraph
 	/**
 	 * Contructs empty graph.
 	 */
-    private int i = 0; //  to Tranverse for vertext
-    private int j = 0; // to traverse arrPair 
-    private Map<String> vertex = new HashMap<String>;
-    private MyPair arrPair[] = new MyPair[1];
-    private int incidenceMatrix[][] = new int[4][4];
+    private int i = 0; //  to Tranverse through vertex
+    private int j = 0; // to Traverse through edges
+    private Map<String, Integer> vertex = new HashMap(String, Integer);
+    private Map<String, Integer> edges = new HashMap(String, Integer);
+    private int weights[][] = new int[4][4];
+    
     /* 
      * Every time iterate through array use array.length - 1 because of the null extra item
     */
@@ -26,23 +27,27 @@ public class IncidenceMatrix extends AbstractAssocGraph
         System.out.println("hihi");
     	// Implement me!
     } // end of IncidentMatrix()
-        
-    
 
     public void addVertex(String vertLabel) {
         // Implement me!
-        vertices[i] = vertLabel;
+        vertex.add(vertLabel, i);
         i++;
-        vertices = Arrays.copyOf(vertices, i+1);
     } // end of addVertex()
 
 
     public void addEdge(String srcLabel, String tarLabel, int weight) {
         String newVert = srcLabel + tarLabel; 
-        MyPair newPair = new MyPair(newVert, weight);
-        arrPair[j] = newPair;
+        edges.add(newVert, j);
         j++;
-        arrPair = Arrays.copyOf(arrPair, j+1);
+
+        for(int x = 0; x < j; x++){
+            for(int y = 0; y < 4; y++){
+                if(vertex.get(srcLabel) == y){
+                    weights[y][x] = weight;
+                }
+            }
+        }
+    
     } // end of addEdge()
 
     // public void debug(String srcLabel, String tarLabel, MyPair pair) {
@@ -60,26 +65,22 @@ public class IncidenceMatrix extends AbstractAssocGraph
 
 	public int getEdgeWeight(String srcLabel, String tarLabel) {
         // Implement me!
-        for(int i = 0; i < arrPair.length - 1; i++) {
-            if(arrPair[i].getKey().equals(srcLabel+tarLabel)) {
-                return arrPair[i].getValue();
-            }
-        }
-		// update return value
+        // String edge = srcLabel + tarLabel;
+        // edges.get();
 		return EDGE_NOT_EXIST;
 	} // end of existEdge()
 
 
 	public void updateWeightEdge(String srcLabel, String tarLabel, int weight) {
-        String findLabel = srcLabel + tarLabel;
-        for(int i = 0; i < arrPair.length - 1; i++)
-        {
-            if(arrPair[i].getKey().equals(findLabel))
-            {
-                MyPair newPair = new MyPair(findLabel, weight);
-                arrPair[i] = newPair;  
-            }
-        }
+        // String findLabel = srcLabel + tarLabel;
+        // for(int i = 0; i < arrPair.length - 1; i++)
+        // {
+        //     if(arrPair[i].getKey().equals(findLabel))
+        //     {
+        //         MyPair newPair = new MyPair(findLabel, weight);
+        //         arrPair[i] = newPair;  
+        //     }
+        // }
 
     } // end of updateWeightEdge()
 
@@ -87,31 +88,31 @@ public class IncidenceMatrix extends AbstractAssocGraph
 //MyPair rightHand[] = Arrays.copyOfRange(arrPair, i+1, arrPair.length);
 
     public void removeVertex(String vertLabel) {
-        // One of the approach using O(n)
-        int removeIndex = -1;
-        String originalArray[] = vertices.clone();
-        for(int i = 0; i < vertices.length-1; i++) { 
-            if(vertices[i].equals(vertLabel)) {
-                removeIndex = i;
-            }
-        }
-        System.out.println("Remove index:" + removeIndex);
+        // // One of the approach using O(n)
+        // int removeIndex = -1;
+        // String originalArray[] = vertices.clone();
+        // for(int i = 0; i < vertices.length-1; i++) { 
+        //     if(vertices[i].equals(vertLabel)) {
+        //         removeIndex = i;
+        //     }
+        // }
+        // System.out.println("Remove index:" + removeIndex);
 
-        boolean found = false;
-        for(int i=0; i< originalArray.length -1; i++)
-        {
-            if(i == removeIndex) {
-                found=true;
-            } else {
-                if(found) { 
-                    vertices[i-1] = originalArray[i];
-                } else {
-                    vertices[i] = originalArray[i];
-                }
-            }
-        }
-        vertices =  (removeIndex != -1) ?  
-        Arrays.copyOf(vertices,vertices.length-1) : vertices;
+        // boolean found = false;
+        // for(int i=0; i< originalArray.length -1; i++)
+        // {
+        //     if(i == removeIndex) {
+        //         found=true;
+        //     } else {
+        //         if(found) { 
+        //             vertices[i-1] = originalArray[i];
+        //         } else {
+        //             vertices[i] = originalArray[i];
+        //         }
+        //     }
+        // }
+        // vertices =  (removeIndex != -1) ?  
+        // Arrays.copyOf(vertices,vertices.length-1) : vertices;
         // int removeIndex = String.join("",Arrays.copyOfRange(vertices,0,vertices.length - 1)).indexOf(vertLabel); 
         // convert anything from 0 to lastIndex - 1 to a string;
         // String leftHand[] = Arrays.copyOfRange(vertices,0,removeIndex);
@@ -152,18 +153,18 @@ public class IncidenceMatrix extends AbstractAssocGraph
 
 
     public void printVertices(PrintWriter os) {
-       for(int i=0; i < vertices.length - 1; i++)
-       {
-           os.println(vertices[i]);
-       }
+    //    for(int i=0; i < vertices.length - 1; i++)
+    //    {
+    //        os.println(vertices[i]);
+    //    }
     } // end of printVertices()
 
 
     public void printEdges(PrintWriter os) {
-        for(int i=0; i < arrPair.length - 1; i++)
-        {
-            os.println(arrPair[i].getKey());
-        }
+        // for(int i=0; i < arrPair.length - 1; i++)
+        // {
+        //     os.println(arrPair[i].getKey());
+        // }
     } // end of printEdges()
 
 } // end of class IncidenceMatrix

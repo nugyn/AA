@@ -15,41 +15,35 @@ public class AdjList extends AbstractAssocGraph
 	 * Contructs empty graph.
 	 */
 
-    /* Reference to the head of the node */
-    protected Node mHead; 
-    /* Array of NODES ie ArrayLists*/
-    int i = 0;
-    protected Node headers[] = new Node[i+1];
+    int i = 0;  // Headers array traverse variable
+    protected Node headers[] = new Node[i+1]; // Array of headers of the LinkList. +1 for extra slot
     
     public AdjList(){
-        //
+        /* Empty constructor*/
     }
 
     public void addVertex(String vertLabel) {
-        /* Make a new linklist */
-        System.out.println("Called");
+        /* Make a new linklist and add it to the headers array. Then extends
+         * the length of the headers array.
+         */
         Node head = new Node(vertLabel);
         head.setHeader();
         headers[i] = head;
         i++;
-        headers = Arrays.copyOf(headers, i+1);
+        headers = Arrays.copyOf(headers, i+1); 
     } // end of addVertex()
 
     public void addEdge(String srcLabel, String tarLabel, int weight) {
-        /* Update the Head, and Tail*/
+        /* Traverse through the headers, look for the header and add the edge to 
+         * its linklist
+         */
         for(int i = 0; i < headers.length - 1; i++) {
-            System.out.println("Checking header: " + headers[i].getLabel());
             if(headers[i].getLabel().equals(srcLabel)){
                 Node currNode = headers[i];
                 while(currNode.getNext() != null) {
-                    /* This is the tail */
+                    /* Reach to the end of the linklist */
                     currNode = currNode.getNext();
                 }
-
-                System.out.println("[+] we are at " + currNode.getLabel());
-                if(currNode.getPrev() != null)
-                    System.out.println("[+] The previous is " + currNode.getPrev().getLabel());
-
                 Node newNode = new Node(tarLabel);
                 newNode.setWeight(weight);
                 newNode.setPrev(currNode);
@@ -68,7 +62,9 @@ public class AdjList extends AbstractAssocGraph
 
 
     public void updateWeightEdge(String srcLabel, String tarLabel, int weight) {
-        // Implement me!
+        /* Traverse through the headers, find the header that matches srcLabel. 
+         * Look for each node in the LinkList and then Update its weight.
+         */
         for(int i = 0; i < headers.length - 1; i++) {
             if(headers[i].getLabel().equals(srcLabel)) {
                 Node currNode = headers[i];
@@ -83,19 +79,32 @@ public class AdjList extends AbstractAssocGraph
 
 
     public void removeVertex(String vertLabel) {
+        /* Loop through the headers list, find the removeIndex. IF can't find, 
+         * removeIndex = -1
+         * 
+         * Looping through each Node from the Header, find the Node which connected to that
+         * Vertex and remove it.
+         * 
+         * Update the original headers array so that the target vertex is removed.
+         * 
+        */
         int removeIndex = -1;
         Node originalHeaders[] = headers.clone();
         boolean found = false;
 
         for(int i = 0; i < headers.length-1; i++) { 
-            System.out.println("[...] Headers: " + headers[i].getLabel());
+            /* Find remove Index and remove related Node each linklist using
+             * removeEdge()
+             */
             if(headers[i].getLabel().equals(vertLabel)) {
                 removeIndex = i;
             }
             removeEdge(headers[i],vertLabel);
         }
+
         for(int i=0; i< originalHeaders.length -1; i++)
         {
+            /* Remove the vertex from the headers array */
             if(i == removeIndex) {
                 found=true;
             } else {
@@ -107,15 +116,17 @@ public class AdjList extends AbstractAssocGraph
             }
         }
         if(removeIndex != -1) {
+            /* Once the header is removed, adjust the size of the original
+             * headers array by 1.
+             */
             headers = Arrays.copyOf(headers,headers.length-1);
             i--;
         }
     } // end of removeVertex()
 
     public void removeEdge(Node header, String vertLabel) {
-        /* Loop throught the header and delete vertLabel */
+        /* Loop throught the the header node and delete vertLabel in its nodes */
         while(header.getNext()!= null) { 
-            System.out.println("[....] We are in label: " + header.getLabel());
             header = header.getNext();
         }
         if(header.getLabel().equals(vertLabel) && !header.isHeader()) {
@@ -130,7 +141,25 @@ public class AdjList extends AbstractAssocGraph
         }
     }
 
+    public List<MyPair> sortMyPairs(List<MyPair> myPair) {
+        /* Using Bubble Sort to sort MyPair list*/
+        for (int i = 0; i <= myPair.size()-2; i++) {
+            for(int j = 0; j <= myPair.size() - 2 - i; j++) {
+                if(myPair.get(j+1).getValue() < myPair.get(j).getValue()) {
+                    Collections.swap(myPair,j,j+1);
+                }
+            }
+        }
+        return myPair;
+    }
+
     public List<MyPair> inNearestNeighbours(int k, String vertLabel) {
+        /* Loop through every other headers that's not vertLabel, and find
+         * if it's pointing to vertLabel. If yes then add to the MyPair neighbours List.
+         * 
+         * This List is then also be sorted using sortMyPairs();
+         * And return according to k parameter.
+         */
         List<MyPair> neighbours = new ArrayList<MyPair>();
         for(int i = 0; i < headers.length - 1; i++){
             if(!headers[i].getLabel().equals(vertLabel)){
@@ -146,6 +175,7 @@ public class AdjList extends AbstractAssocGraph
                 }
             }
         }
+        neighbours = sortMyPairs(neighbours);
         if(k != -1) {
             try {
                 neighbours = neighbours.subList(0,k);
@@ -157,18 +187,13 @@ public class AdjList extends AbstractAssocGraph
         return neighbours;
     } // end of inNearestNeighbours()
 
-    public List<MyPair> sortMyPairs(List<MyPair> myPair) {
-        for (int i = 0; i <= myPair.size()-2; i++) {
-            for(int j = 0; j <= myPair.size() - 2 - i; j++) {
-                if(myPair.get(j+1).getValue() < myPair.get(j).getValue()) {
-                    Collections.swap(myPair,j,j+1);
-                }
-            }
-        }
-        return myPair;
-    }
-
     public List<MyPair> outNearestNeighbours(int k, String vertLabel) {
+        /* Loop through every headers in neighbours. If the header is the same 
+         * as vertLabel, look at its child and add all the Node into neighbours list.
+         *
+         * This list is then being sorted uisng sortMyPairs()
+         * and return according to K parameter;
+         */
         List<MyPair> neighbours = new ArrayList<MyPair>();
         for(int i = 0; i < headers.length - 1; i++) {
             if(headers[i].getLabel().equals(vertLabel)) {
@@ -196,7 +221,7 @@ public class AdjList extends AbstractAssocGraph
     }
      // end of outNearestNeighbours()
     public void printVertices(PrintWriter os) {
-        // Implement me!
+        /* Loop through all the header in headers array and print the label */
         for(int i = 0; i < headers.length - 1; i++) {
             System.out.printf("%s\n", headers[i].getLabel());
         }
@@ -204,7 +229,7 @@ public class AdjList extends AbstractAssocGraph
 
 
     public void printEdges(PrintWriter os) {
-        // Implement me!
+        /* Loop through the headers, for each header, print all of the nodes */
         for(int i = 0; i < headers.length - 1; i++) {
             Node currNode = headers[i];
             while(currNode != null) {
@@ -219,13 +244,14 @@ public class AdjList extends AbstractAssocGraph
 
 
     protected class Node {
-        private String label; // Stored value of the node
-        private Node mPrev; // Stored the value of the previous node
-        private Node mNext; //Reference to the next node
-        private int weight;
-        private boolean isHeader = false;
+        private String label; // Stored label of current node
+        private Node mPrev; // Reference to the previous node
+        private Node mNext; // Reference to the next node
+        private int weight; // Weight of the current node
+        private boolean isHeader = false; 
 
         public Node(String value) {
+            /* Constructor to initialise the node*/
             label = value;
             mNext = null;
             mPrev = null;
@@ -264,12 +290,6 @@ public class AdjList extends AbstractAssocGraph
 
         public void setPrev(Node prev) {
             mPrev = prev;
-        }
-
-        @Override
-        public String toString() {
-            return String.format("Label: %s\n Weight: %d Next: %s\n Previous: \n", this.label, this.weight, 
-            this.mNext.label, this.mPrev.label);
         }
 
         public boolean isHeader(){
