@@ -43,6 +43,7 @@ public class IncidenceMatrix extends AbstractAssocGraph
 
             for(int row = 0; row < 4; row++){
                 if(vertex.get(srcLabel) == row){
+                    System.out.printf("[..] (addEdge) rows: %s\n [...] col: %s\n", row, col);
                     weights[row][col] = weight;
                 }
             }
@@ -69,6 +70,7 @@ public class IncidenceMatrix extends AbstractAssocGraph
         System.out.printf("[+] Getting weight of edge: %s \n", edge);
         int rowPosition = vertex.get(srcLabel);
         int edgeWeight = weights[rowPosition][colPosition];
+        System.out.printf("[...] (getEdgeWeight) rows: %s\n[...] col: %s\n", rowPosition, colPosition);
         System.out.printf("[...] Retrieved weight is: %s \n", edgeWeight);
         return edgeWeight;
         

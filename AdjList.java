@@ -35,21 +35,32 @@ public class AdjList extends AbstractAssocGraph
 
     public void addEdge(String srcLabel, String tarLabel, int weight) {
         /* Traverse through the headers, look for the header and add the edge to 
-         * its linklist
+         * its linklist. This method also check if the target label is a vertex.
          */
-        for(int i = 0; i < headers.length - 1; i++) {
-            if(headers[i].getLabel().equals(srcLabel)){
-                Node currNode = headers[i];
-                while(currNode.getNext() != null) {
-                    /* Reach to the end of the linklist */
-                    currNode = currNode.getNext();
-                }
-                Node newNode = new Node(tarLabel);
-                newNode.setWeight(weight);
-                newNode.setPrev(currNode);
-                currNode.setNext(newNode); 
+        boolean validLabel = false;
+        for(int i = 0; i< headers.length - 1; i++) {
+            if(headers[i].getLabel().equals(tarLabel)) {
+                validLabel = true;
                 break;
             }
+        }
+        if(validLabel) {
+            for(int i = 0; i < headers.length - 1; i++) {
+                if(headers[i].getLabel().equals(srcLabel)){
+                    Node currNode = headers[i];
+                    while(currNode.getNext() != null) {
+                        /* Reach to the end of the linklist */
+                        currNode = currNode.getNext();
+                    }
+                    Node newNode = new Node(tarLabel);
+                    newNode.setWeight(weight);
+                    newNode.setPrev(currNode);
+                    currNode.setNext(newNode); 
+                    break;
+                }
+            }
+        } else {
+            System.out.println("Target label isn't a vertex");
         }
     }
      // end of addEdge()
