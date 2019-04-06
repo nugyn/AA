@@ -15,7 +15,7 @@ public class IncidenceMatrix extends AbstractAssocGraph
 	/**
 	 * Contructs empty graph.
 	 */
-    private int i = 0; //  to Tranverse through vertex
+    private int row = 0; //  to Tranverse through vertex
     private int col = 0; // to Traverse through edges
     private Map<String, Integer> vertex = new HashMap<String, Integer>();
     private Map<String, Integer> edges = new HashMap<String, Integer>();
@@ -31,8 +31,8 @@ public class IncidenceMatrix extends AbstractAssocGraph
 
     public void addVertex(String vertLabel) {
         // Implement me!
-        vertex.put(vertLabel, i);
-        i++;
+        vertex.put(vertLabel, row);
+        row++;
     } // end of addVertex()
 
 
@@ -163,7 +163,7 @@ public class IncidenceMatrix extends AbstractAssocGraph
             String key = entry.getKey();
             System.out.printf(key);
        }
-       
+
     } // end of printVertices()
 
 
