@@ -56,7 +56,26 @@ public class AdjList extends AbstractAssocGraph
 
 
     public int getEdgeWeight(String srcLabel, String tarLabel) {
-
+        /* Loop through each header. For each header loop through its childs and
+         * return the weight of tarLabel child
+         */
+            for(int i = 0; i < headers.length - 1; i++) {
+                if(headers[i].getLabel().equals(srcLabel)) {
+                    Node currNode = headers[i];
+                    while(currNode != null) {
+                        if(!currNode.getLabel().equals(tarLabel) || currNode.isHeader()) {
+                            currNode = currNode.getNext();
+                        } else {
+                            break;
+                        }
+                    }
+                    if(currNode != null && currNode.getLabel().equals(tarLabel)) {
+                        return currNode.getWeight();
+                    } else {
+                        return EDGE_NOT_EXIST;
+                    }
+                }
+            }
 		    return EDGE_NOT_EXIST;
     } // end of existEdge()
 
@@ -223,8 +242,9 @@ public class AdjList extends AbstractAssocGraph
     public void printVertices(PrintWriter os) {
         /* Loop through all the header in headers array and print the label */
         for(int i = 0; i < headers.length - 1; i++) {
-            System.out.printf("%s\n", headers[i].getLabel());
+            os.printf("%s ", headers[i].getLabel());
         }
+        os.println();
     } // end of printVertices()
 
 
@@ -234,8 +254,8 @@ public class AdjList extends AbstractAssocGraph
             Node currNode = headers[i];
             while(currNode != null) {
                 if(currNode.getWeight() != 0) {
-                    System.out.printf("%s %s %d",headers[i].getLabel(), currNode.getLabel(), currNode.getWeight());
-                    System.out.println("");
+                    os.printf("%s %s %d",headers[i].getLabel(), currNode.getLabel(), currNode.getWeight());
+                    os.println("");
                 }
                 currNode = currNode.getNext();
             }

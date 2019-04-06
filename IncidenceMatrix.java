@@ -1,6 +1,7 @@
 import java.io.*;
 import java.util.*;
 
+
 /**
  * Incident matrix implementation for the AssociationGraph interface.
  *
@@ -15,9 +16,9 @@ public class IncidenceMatrix extends AbstractAssocGraph
 	 * Contructs empty graph.
 	 */
     private int i = 0; //  to Tranverse through vertex
-    private int j = 0; // to Traverse through edges
-    private Map<String, Integer> vertex = new HashMap(String, Integer);
-    private Map<String, Integer> edges = new HashMap(String, Integer);
+    private int col = 0; // to Traverse through edges
+    private Map<String, Integer> vertex = new HashMap<String, Integer>();
+    private Map<String, Integer> edges = new HashMap<String, Integer>();
     private int weights[][] = new int[4][4];
     
     /* 
@@ -30,23 +31,21 @@ public class IncidenceMatrix extends AbstractAssocGraph
 
     public void addVertex(String vertLabel) {
         // Implement me!
-        vertex.add(vertLabel, i);
+        vertex.put(vertLabel, i);
         i++;
     } // end of addVertex()
 
 
     public void addEdge(String srcLabel, String tarLabel, int weight) {
         String newVert = srcLabel + tarLabel; 
-        edges.add(newVert, j);
-        j++;
+        edges.put(newVert, col);
+        col++;
 
-        for(int x = 0; x < j; x++){
-            for(int y = 0; y < 4; y++){
-                if(vertex.get(srcLabel) == y){
-                    weights[y][x] = weight;
+            for(int row = 0; row < 4; row++){
+                if(vertex.get(srcLabel) == row){
+                    weights[row][col] = weight;
                 }
             }
-        }
     
     } // end of addEdge()
 
@@ -65,9 +64,14 @@ public class IncidenceMatrix extends AbstractAssocGraph
 
 	public int getEdgeWeight(String srcLabel, String tarLabel) {
         // Implement me!
-        // String edge = srcLabel + tarLabel;
-        // edges.get();
-		return EDGE_NOT_EXIST;
+        String edge = srcLabel + tarLabel;
+        int colPosition = edges.get(edge);
+        System.out.printf("[+] Getting weight of edge: %s \n", edge);
+        int rowPosition = vertex.get(srcLabel);
+        int edgeWeight = weights[rowPosition][colPosition];
+        System.out.printf("[...] Retrieved weight is: %s \n", edgeWeight);
+        return edgeWeight;
+        
 	} // end of existEdge()
 
 
@@ -161,10 +165,15 @@ public class IncidenceMatrix extends AbstractAssocGraph
 
 
     public void printEdges(PrintWriter os) {
-        // for(int i=0; i < arrPair.length - 1; i++)
-        // {
-        //     os.println(arrPair[i].getKey());
-        // }
+        for (Map.Entry<String, Integer> entry : edges.entrySet()) {
+            String key = entry.getKey();
+            
+            String a = key.substring(0, 1);
+            String b = key.substring(1, 2);
+            int weight = getEdgeWeight(a, b);
+            System.out.printf("[+} Edge is : %s\n, [...] Weight is:  %s\n", key, weight);
+;        }
+
     } // end of printEdges()
 
 } // end of class IncidenceMatrix
