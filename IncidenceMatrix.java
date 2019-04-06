@@ -78,65 +78,26 @@ public class IncidenceMatrix extends AbstractAssocGraph
 
 
 	public void updateWeightEdge(String srcLabel, String tarLabel, int weight) {
-        // String findLabel = srcLabel + tarLabel;
-        // for(int i = 0; i < arrPair.length - 1; i++)
-        // {
-        //     if(arrPair[i].getKey().equals(findLabel))
-        //     {
-        //         MyPair newPair = new MyPair(findLabel, weight);
-        //         arrPair[i] = newPair;  
-        //     }
-        // }
-
+        String findLabel = srcLabel + tarLabel;
+        edges.remove(findLabel);
+        edges.put(findLabel, weight);
     } // end of updateWeightEdge()
 
-//MyPair leftHand[] = Arrays.copyOfRange(arrPair, 0, i);
-//MyPair rightHand[] = Arrays.copyOfRange(arrPair, i+1, arrPair.length);
+
 
     public void removeVertex(String vertLabel) {
-        // // One of the approach using O(n)
-        // int removeIndex = -1;
-        // String originalArray[] = vertices.clone();
-        // for(int i = 0; i < vertices.length-1; i++) { 
-        //     if(vertices[i].equals(vertLabel)) {
-        //         removeIndex = i;
-        //     }
-        // }
-        // System.out.println("Remove index:" + removeIndex);
-
-        // boolean found = false;
-        // for(int i=0; i< originalArray.length -1; i++)
-        // {
-        //     if(i == removeIndex) {
-        //         found=true;
-        //     } else {
-        //         if(found) { 
-        //             vertices[i-1] = originalArray[i];
-        //         } else {
-        //             vertices[i] = originalArray[i];
-        //         }
-        //     }
-        // }
-        // vertices =  (removeIndex != -1) ?  
-        // Arrays.copyOf(vertices,vertices.length-1) : vertices;
-        // int removeIndex = String.join("",Arrays.copyOfRange(vertices,0,vertices.length - 1)).indexOf(vertLabel); 
-        // convert anything from 0 to lastIndex - 1 to a string;
-        // String leftHand[] = Arrays.copyOfRange(vertices,0,removeIndex);
-        // String rightHand[] = Arrays.copyOfRange(vertices,removeIndex+1,vertices.length-1);
         
-        // System.out.println("Lefthand: " + leftHand.toString());
-        // System.out.println("Righthand: " + rightHand.toString());
+        for (Map.Entry<String, Integer> entry : edges.entrySet()) {
+            String key = entry.getKey();
 
-        // vertices =  Arrays.copyOf(vertices,vertices.length-2);
-        // System.out.println("vertices: " + vertices.toString());
+            if(key.equals(vertLabel)){
+                String value = entry.getValue();
+            } 
+       }
 
-        // for(int i = 0; i < vertices.length ; i++) { 
-        //     if(i < leftHand.length) {
-        //         vertices[i] = leftHand[i];
-        //     } else {
-        //         vertices[i] = rightHand[i];
-        //     }
-        // }
+
+        vertex.remove(vertLabel);
+
     } // end of removeVertex()
 
 
@@ -161,7 +122,7 @@ public class IncidenceMatrix extends AbstractAssocGraph
     public void printVertices(PrintWriter os) {
         for (Map.Entry<String, Integer> entry : vertex.entrySet()) {
             String key = entry.getKey();
-            System.out.printf(key);
+            System.out.println(key);
        }
 
     } // end of printVertices()

@@ -1,4 +1,4 @@
-    import java.io.*;
+import java.io.*;
 import java.util.*;
 
 /**
@@ -98,10 +98,18 @@ public class AdjList extends AbstractAssocGraph
         for(int i = 0; i < headers.length - 1; i++) {
             if(headers[i].getLabel().equals(srcLabel)) {
                 Node currNode = headers[i];
-                while(!currNode.getLabel().equals(tarLabel)) {
-                    currNode = currNode.getNext();
+                while(currNode != null) {
+                    if(!currNode.getLabel().equals(tarLabel)) {
+                        currNode = currNode.getNext();
+                    } else {
+                        break;
+                    }
                 }
-                currNode.setWeight(weight);
+                if(currNode != null) {
+                    currNode.setWeight(weight);
+                } else {
+                    System.out.println("Can't GET node " + tarLabel + " in " + srcLabel);
+                }
                 break;
             }
         }
@@ -220,7 +228,7 @@ public class AdjList extends AbstractAssocGraph
     public List<MyPair> outNearestNeighbours(int k, String vertLabel) {
         /* Loop through every headers in neighbours. If the header is the same 
          * as vertLabel, look at its child and add all the Node into neighbours list.
-         *
+         * 
          * This list is then being sorted uisng sortMyPairs()
          * and return according to K parameter;
          */
