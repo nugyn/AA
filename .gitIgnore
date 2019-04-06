@@ -1,1 +1,5 @@
 *.class;
+test1-adjlist.edge.out
+test1-adjlist.misc.out
+test1-adjlist.neigh.out
+test1-adjlist.vert.out

@@ -37,9 +37,9 @@ public class IncidenceMatrix extends AbstractAssocGraph
 
 
     public void addEdge(String srcLabel, String tarLabel, int weight) {
-        String newVert = srcLabel + tarLabel; 
-        edges.put(newVert, col);
-        col++;
+        String newEdge = srcLabel + tarLabel; 
+        int colPosition = vertex.get(srcLabel);
+        edges.put(newEdge, col);
 
             for(int row = 0; row < 4; row++){
                 if(vertex.get(srcLabel) == row){
@@ -47,7 +47,7 @@ public class IncidenceMatrix extends AbstractAssocGraph
                     weights[row][col] = weight;
                 }
             }
-    
+        col++;
     } // end of addEdge()
 
     // public void debug(String srcLabel, String tarLabel, MyPair pair) {
@@ -159,10 +159,11 @@ public class IncidenceMatrix extends AbstractAssocGraph
 
 
     public void printVertices(PrintWriter os) {
-    //    for(int i=0; i < vertices.length - 1; i++)
-    //    {
-    //        os.println(vertices[i]);
-    //    }
+        for (Map.Entry<String, Integer> entry : vertex.entrySet()) {
+            String key = entry.getKey();
+            System.out.printf(key);
+       }
+       
     } // end of printVertices()
 
 

@@ -157,7 +157,7 @@ public class GraphEval
 
 						break;
 					// print vertices
-					case "ls":
+					case "PV":
 						graph.printVertices(verticesOutWriter);
 						break;
 	                // print edges

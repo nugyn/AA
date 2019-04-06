@@ -1,4 +1,4 @@
-import java.io.*;
+    import java.io.*;
 import java.util.*;
 
 /**
@@ -175,7 +175,7 @@ public class AdjList extends AbstractAssocGraph
         /* Using Bubble Sort to sort MyPair list*/
         for (int i = 0; i <= myPair.size()-2; i++) {
             for(int j = 0; j <= myPair.size() - 2 - i; j++) {
-                if(myPair.get(j+1).getValue() < myPair.get(j).getValue()) {
+                if(myPair.get(j+1).getValue() > myPair.get(j).getValue()) {
                     Collections.swap(myPair,j,j+1);
                 }
             }
