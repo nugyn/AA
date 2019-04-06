@@ -14,7 +14,6 @@ class MyPair {
 		mWeight = weight;
 	}
 
-
 	public String getKey() {
 		return mVert;
 	}
@@ -22,5 +21,7 @@ class MyPair {
 	public Integer getValue() {
 		return mWeight;
 	}
+
+
 
 } // end of class MyPair

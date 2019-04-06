@@ -16,7 +16,7 @@ public class IncidenceMatrix extends AbstractAssocGraph
 	 */
     private int i = 0; //  to Tranverse for vertext
     private int j = 0; // to traverse arrPair 
-    private String vertices[] = new String[1];
+    private Map<String> vertex = new HashMap<String>;
     private MyPair arrPair[] = new MyPair[1];
     private int incidenceMatrix[][] = new int[4][4];
     /* 
@@ -26,13 +26,7 @@ public class IncidenceMatrix extends AbstractAssocGraph
         System.out.println("hihi");
     	// Implement me!
     } // end of IncidentMatrix()
-        // for(int x=0; i < vertices.length; i++)
-                // {
-                //  for(int y=0; j < arrPair.length; j++)
-                //  {
-                //     incidenceMatrix[i][j] = arrPair[j].getValue();
-                //  }   
-                // }
+        
     
 
     public void addVertex(String vertLabel) {

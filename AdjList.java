@@ -132,22 +132,69 @@ public class AdjList extends AbstractAssocGraph
 
     public List<MyPair> inNearestNeighbours(int k, String vertLabel) {
         List<MyPair> neighbours = new ArrayList<MyPair>();
-
-        // Implement me!
-
+        for(int i = 0; i < headers.length - 1; i++){
+            if(!headers[i].getLabel().equals(vertLabel)){
+                Node currNode = headers[i];
+                currNode = currNode.getNext();
+                while(currNode != null){
+                    if(currNode.getLabel().equals(vertLabel)){
+                        MyPair nearestNeighbour = 
+                        new MyPair(headers[i].getLabel(), currNode.getWeight());
+                        neighbours.add(nearestNeighbour);
+                    }
+                    currNode = currNode.getNext();
+                }
+            }
+        }
+        if(k != -1) {
+            try {
+                neighbours = neighbours.subList(0,k);
+            } catch (IndexOutOfBoundsException e) {
+                System.out.println("Out of bound Index, please choose less than "
+                 + neighbours.size());
+            }
+        }
         return neighbours;
     } // end of inNearestNeighbours()
 
+    public List<MyPair> sortMyPairs(List<MyPair> myPair) {
+        for (int i = 0; i <= myPair.size()-2; i++) {
+            for(int j = 0; j <= myPair.size() - 2 - i; j++) {
+                if(myPair.get(j+1).getValue() < myPair.get(j).getValue()) {
+                    Collections.swap(myPair,j,j+1);
+                }
+            }
+        }
+        return myPair;
+    }
 
     public List<MyPair> outNearestNeighbours(int k, String vertLabel) {
         List<MyPair> neighbours = new ArrayList<MyPair>();
-
-        // Implement me!
-
+        for(int i = 0; i < headers.length - 1; i++) {
+            if(headers[i].getLabel().equals(vertLabel)) {
+                Node currNode = headers[i];
+                currNode = currNode.getNext();
+                while(currNode != null) {
+                    MyPair nearestNeighbour = 
+                    new MyPair(currNode.getLabel(), currNode.getWeight());
+                    neighbours.add(nearestNeighbour);
+                    currNode = currNode.getNext();
+                }
+                break;
+            }
+        }
+        neighbours = sortMyPairs(neighbours);
+        if(k != -1) {
+            try {
+                neighbours = neighbours.subList(0,k);
+            } catch (IndexOutOfBoundsException e) {
+                System.out.println("Out of bound Index, please choose less than "
+                 + neighbours.size());
+            }
+        }
         return neighbours;
-    } // end of outNearestNeighbours()
-
-
+    }
+     // end of outNearestNeighbours()
     public void printVertices(PrintWriter os) {
         // Implement me!
         for(int i = 0; i < headers.length - 1; i++) {
@@ -172,12 +219,11 @@ public class AdjList extends AbstractAssocGraph
 
 
     protected class Node {
-    
-        protected String label; // Stored value of the node
-        protected Node mPrev; // Stored the value of the previous node
-        protected Node mNext; //Reference to the next node
-        protected int weight;
-        protected boolean isHeader = false;
+        private String label; // Stored value of the node
+        private Node mPrev; // Stored the value of the previous node
+        private Node mNext; //Reference to the next node
+        private int weight;
+        private boolean isHeader = false;
 
         public Node(String value) {
             label = value;
