@@ -19,7 +19,7 @@ public class IncidenceMatrix extends AbstractAssocGraph
     private int col = 0; // The global variable, to determine the new size of the weight array, as well as the edges position.
     private Map<String, Integer> vertex = new HashMap<String, Integer>();
     private Map<String, Integer> edges = new HashMap<String, Integer>();
-    private int weights[][] = new int[row+1][col+1];
+    private int weights[][] = new int[row][col];
     /* 
      * Every time iterate through array use array.length - 1 because of the null extra item
     */
@@ -59,15 +59,26 @@ public class IncidenceMatrix extends AbstractAssocGraph
         */
         
         String newEdge = srcLabel + tarLabel; 
-        edges.put(newEdge, col);
-        col++;
-        int indA = vertex.get(srcLabel);
-        int indB = edges.get(newEdge);
-        int indR = vertex.get(tarLabel);
-        weights = extend(weights, row, col); // increases the size of the array.Array
-        weights[indA][indB] = weight;
-        weights[indR][indB] = -weight;
-
+        int indR = -1;
+        try {
+            indR = vertex.get(tarLabel);
+        } catch (Exception e) {
+            System.out.println("Error: Vertex " + tarLabel + " doesn't exist");
+        }
+        if(indR >= 0) {
+            try{
+                edges.put(newEdge, col);
+                col++;
+                int indA = vertex.get(srcLabel);
+                int indB = edges.get(newEdge);
+                weights = extend(weights, row, col); // increases the size of the array.Array
+                weights[indA][indB] = weight;
+                weights[indR][indB] = -weight;
+            } catch (Exception e) {
+                System.out.println("Error: Vertex " + srcLabel + " doesn't exist");
+            }
+           
+        }
     } // end of addEdge()
 
     // public void debug(String srcLabel, String tarLabel, MyPair pair) {
@@ -86,12 +97,24 @@ public class IncidenceMatrix extends AbstractAssocGraph
 	public int getEdgeWeight(String srcLabel, String tarLabel) {
         // Implement me!
         String edge = srcLabel + tarLabel;
-        int colPosition = edges.get(edge);
-        int rowPosition = vertex.get(srcLabel);
-        int edgeWeight = weights[rowPosition][colPosition];
-      
-        return edgeWeight;
+        int colPosition = -1;
+        int rowPosition = -1;
+        try {
+            colPosition = edges.get(edge);
+        } catch (Exception e) {
+            System.out.println("Error: " + edge + " edge doesn't exist");
+        }
         
+        try{
+            rowPosition = vertex.get(srcLabel);
+        } catch (Exception e) {
+            System.out.println("Error: " + srcLabel + " vertex doesn't exist.");
+        }
+        if(rowPosition >= 0 && colPosition >= 0) {
+            int edgeWeight = weights[rowPosition][colPosition];
+            return edgeWeight;
+        }
+        return EDGE_NOT_EXIST;
 	} // end of existEdge()
 
 
@@ -102,31 +125,40 @@ public class IncidenceMatrix extends AbstractAssocGraph
     } // end of updateWeightEdge()
 
 
+    public Integer removeEdge(String vertLabel) {
+        Integer colPosition = -1;
 
-    public void removeVertex(String vertLabel) {
-        Integer rowPosition = 0;
-        Integer colPosition = 0;
-
-        for (Map.Entry<String, Integer> entry : vertex.entrySet()) {
+        for (Map.Entry<String, Integer> entry : edges.entrySet()) {
             String key = entry.getKey();
-
-            if(key.equals(vertLabel)){
-                rowPosition = entry.getValue();
-            } 
-        }
-
-       for (Map.Entry<String, Integer> entry : edges.entrySet()) {
-        String key = entry.getKey();
             if(key.indexOf(vertLabel) >= 0 ){
                 edges.remove(key); //remove from edge map
                 colPosition = entry.getValue();
             } 
         }
-       
-        weights[rowPosition][colPosition] = 0; // remove associated weight from array
 
+        return colPosition;
+    }
+
+    public void removeVertex(String vertLabel) {
+        Integer rowPosition = -1;
+        Integer colPosition = -1;
+
+        for (Map.Entry<String, Integer> entry : vertex.entrySet()) {
+            String key = entry.getKey();
+            if(key.equals(vertLabel)){
+                rowPosition = entry.getValue();
+            } 
+        }
+        System.out.println(rowPosition);
+        if(edges.size() > 0) {
+            colPosition = removeEdge(vertLabel);
+            if(rowPosition >= 0 && colPosition >= 0) {
+                weights[rowPosition][colPosition] = 0; // remove associated weight from array
+            } else {
+                System.out.println("Can't find vertex " + vertLabel);
+            }
+        }
         vertex.remove(vertLabel); // remove vertex from the map
-
     } // end of removeVertex()
 
 
@@ -158,9 +190,9 @@ public class IncidenceMatrix extends AbstractAssocGraph
 
 
     public void printEdges(PrintWriter os) {
-        for(int i = 0; i < weights.length - 1; i++) {
+        for(int i = 0; i < weights.length; i++) {
             System.out.print("[");
-            for(int j = 0; j < weights[i].length - 1; j++) {
+            for(int j = 0; j < weights[i].length; j++) {
                 System.out.printf("%3d ", weights[i][j]);
             }
             System.out.println("]");
