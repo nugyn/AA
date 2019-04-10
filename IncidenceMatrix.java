@@ -104,7 +104,7 @@ public class IncidenceMatrix extends AbstractAssocGraph
         } catch (Exception e) {
             System.out.println("Error: " + edge + " edge doesn't exist");
         }
-        
+    
         try{
             rowPosition = vertex.get(srcLabel);
         } catch (Exception e) {
@@ -117,24 +117,77 @@ public class IncidenceMatrix extends AbstractAssocGraph
         return EDGE_NOT_EXIST;
 	} // end of existEdge()
 
+    public int[] getPosition(String srcLabel, String tarLabel) {
+        String edge = srcLabel + tarLabel;
+        int colPosition = -1;
+        int rowPosition = -1;
+        if(!tarLabel.isEmpty()) {
+            try {
+                colPosition = edges.get(edge);
+            } catch (Exception e) {
+                System.out.println("Error: " + edge + " edge doesn't exist");
+            }
+        }
+        try{
+            rowPosition = vertex.get(srcLabel);
+        } catch (Exception e) {
+            System.out.println("Error: " + srcLabel + " vertex doesn't exist.");
+        }
+        int result[] = new int[]{colPosition, rowPosition};
+        return result;
+    }
 
 	public void updateWeightEdge(String srcLabel, String tarLabel, int weight) {
-        String findLabel = srcLabel + tarLabel;
-        edges.remove(findLabel);
-        edges.put(findLabel, weight);
+        String edge = srcLabel + tarLabel;
+        String oppEdge = tarLabel + srcLabel;
+        int colPosition = -1;
+        int rowPosition = -1;
+        int oppRowPosition = -1;
+        try {
+            colPosition = edges.get(edge);
+        } catch (Exception e) {
+            System.out.println("Error: " + edge + " edge doesn't exist");
+        }
+        
+        try{
+            rowPosition = vertex.get(srcLabel);
+            oppRowPosition = vertex.get(tarLabel);
+        } catch (Exception e) {
+            System.out.println("Error: vertex doesn't exist.");
+        }
+        if(rowPosition >= 0 && colPosition >= 0 && oppRowPosition >= 0) {
+            weights[rowPosition][colPosition] = weight;
+            weights[oppRowPosition][colPosition] = -weight;
+        }
+
     } // end of updateWeightEdge()
 
 
     public Integer removeEdge(String vertLabel) {
         Integer colPosition = -1;
+        // Iterator it = edges.entrySet().iterator();
+        // while(it.hasNext()) {
+        //     Map.Entry entry = (Map.Entry)it.next();
+        //     String key = (String) entry.getKey();
+        //     if(key.indexOf(vertLabel) >= 0 ){
+        //         edges.remove(key); //remove from edge map
+        //         colPosition = (int) entry.getValue();
+        //     }
+        //     it.remove();
+        // }
+        Map.Entry<String,Integer>[] removeLabels = new Map.Entry<String, Integer>()[];
 
         for (Map.Entry<String, Integer> entry : edges.entrySet()) {
             String key = entry.getKey();
             if(key.indexOf(vertLabel) >= 0 ){
-                edges.remove(key); //remove from edge map
-                colPosition = entry.getValue();
+                removeLabel = key;
+                break;
             } 
         }
+        if(removeLabel != null) {
+            edges.remove(key); //remove from edge map
+        }
+        colPosition = entry.getValue();
 
         return colPosition;
     }
@@ -161,21 +214,61 @@ public class IncidenceMatrix extends AbstractAssocGraph
         vertex.remove(vertLabel); // remove vertex from the map
     } // end of removeVertex()
 
+    public List<MyPair> sortMyPairs(List<MyPair> myPair) {
+        /* Using Bubble Sort to sort MyPair list*/
+        for (int i = 0; i <= myPair.size()-2; i++) {
+            for(int j = 0; j <= myPair.size() - 2 - i; j++) {
+                if(myPair.get(j+1).getValue() > myPair.get(j).getValue()) {
+                    Collections.swap(myPair,j,j+1);
+                }
+            }
+        }
+        return myPair;
+    }
 
 	public List<MyPair> inNearestNeighbours(int k, String vertLabel) {
         List<MyPair> neighbours = new ArrayList<MyPair>();
-        
-        
+        int index = getPosition(vertLabel, "")[1];
 
+        for(int i = 0; i < weights[index].length; i++) {
+            if(weights[index][i] < 0) {
+                String label = "";
+                for(Map.Entry<String, Integer> entry: edges.entrySet()) {
+                    int value = entry.getValue();
+                    if(value == i) {
+                        label = entry.getKey().substring(0,1);
+                    }
+                }
+                System.out.println("Label: " + label);
+                if(!label.isEmpty())
+                    neighbours.add(new MyPair(label,weights[index][i]));
+            }
+        }
+        neighbours = sortMyPairs(neighbours);
         return neighbours;
     } // end of inNearestNeighbours()
 
 
     public List<MyPair> outNearestNeighbours(int k, String vertLabel) {
         List<MyPair> neighbours = new ArrayList<MyPair>();
-            
         // Implement me!
+        int index = getPosition(vertLabel, "")[1];
 
+        for(int i = 0; i < weights[index].length; i++) {
+            if(weights[index][i] > 0) {
+                String label = "";
+                for(Map.Entry<String, Integer> entry: edges.entrySet()) {
+                    int value = entry.getValue();
+                    if(value == i) {
+                        label = entry.getKey().substring(1,2);
+                    }
+                }
+                System.out.println("Label: " + label);
+                if(!label.isEmpty())
+                    neighbours.add(new MyPair(label,weights[index][i]));
+            }
+        }
+        neighbours = sortMyPairs(neighbours);
         return neighbours;
     } // end of outNearestNeighbours()
 
@@ -207,4 +300,4 @@ public class IncidenceMatrix extends AbstractAssocGraph
 
     } // end of printEdges()
 
-} // end of class IncidenceMatrix
+} // end of class IncidenceMatri¥¥¥¥¥
