@@ -161,57 +161,119 @@ public class IncidenceMatrix extends AbstractAssocGraph
         }
 
     } // end of updateWeightEdge()
-
-
-    public Integer removeEdge(String vertLabel) {
-        Integer colPosition = -1;
-        // Iterator it = edges.entrySet().iterator();
-        // while(it.hasNext()) {
-        //     Map.Entry entry = (Map.Entry)it.next();
-        //     String key = (String) entry.getKey();
-        //     if(key.indexOf(vertLabel) >= 0 ){
-        //         edges.remove(key); //remove from edge map
-        //         colPosition = (int) entry.getValue();
-        //     }
-        //     it.remove();
-        // }
-        Map.Entry<String,Integer>[] removeLabels = new Map.Entry<String, Integer>()[];
-
-        for (Map.Entry<String, Integer> entry : edges.entrySet()) {
-            String key = entry.getKey();
-            if(key.indexOf(vertLabel) >= 0 ){
-                removeLabel = key;
-                break;
-            } 
+    public String printArr(int[] arr) {
+        String result = "";
+        for (int i = 0; i < arr.length; i++) {
+            result += arr[i];
+            result += " ";
         }
-        if(removeLabel != null) {
-            edges.remove(key); //remove from edge map
+        return result;
+    }
+    public int[] getEdgePosition(String vertLabel) {
+        int index = 0;
+        int result[] = new int[index+1];
+        boolean found = false;
+        for(Map.Entry<String, Integer> entry: edges.entrySet()) {
+            if(entry.getKey().indexOf(vertLabel) >= 0) {
+                found = true;
+                result[index] = entry.getValue();
+                index++;
+                result = Arrays.copyOf(result, index+1); 
+            }
         }
-        colPosition = entry.getValue();
+        result = Arrays.copyOfRange(result, 0, index);
+        System.out.println("List of edges: " + printArr(result));
+        if(found == false) {
+            result[0] = EDGE_NOT_EXIST;
+        }
+        return result;
+    }
+    public int getVertexPosition(String vertLabel) {
+        for(Map.Entry<String, Integer> entry: vertex.entrySet()) {
+            if(entry.getKey().indexOf(vertLabel) >= 0) {
+                return entry.getValue();
+            }
+        }
+        return EDGE_NOT_EXIST;
+    }
 
-        return colPosition;
+    public boolean checkValidColumn(int index, int[] indexList) {
+        /* Check if the index is in the remove indexList. If it's then return True
+         * else, return false;
+        */
+        for(int i = 0; i < indexList.length; i++) {
+            if(index == indexList[i]) {
+                return false;
+            }
+        }
+        return true;
+    }
+
+    public int[][] clearWeight(int[][] weights, int indVertex, int[] indEdges) {
+        /* Create a new matrix without the removed vertex and edges */
+        System.out.println("Row to remove: " + indVertex + " Column to remove: " + printArr(indEdges));
+        int result[][] = new int[row-1][col - indEdges.length];
+        int mRow = 0;
+        int mCol = 0;
+        System.out.println("Result length: " + result.length + " " + result[0].length);
+        for (int i = 0; i < weights.length; i++) {
+            System.out.println("> Row: " + i);
+            if(i != indVertex) {
+                for(int j = 0; j < weights[i].length; j++) {
+                    System.out.println(">> Checking if " + j + " in " + printArr(indEdges));
+                    if(checkValidColumn(j, indEdges)) {
+                        mRow %= result.length;
+                        mCol %= result[0].length;
+                        result[mRow][mCol] = weights[i][j];
+                        System.out.println("+++ Adding " + weights[i][j] + "into [" + mRow + ", " + mCol + "]");
+                        mCol++;
+                    }
+                }
+                mRow++;
+            }
+        }
+        for (int i = 0; i < result.length; i++) {
+            for(int j = 0; j < result[i].length; j++) {
+                System.out.printf("%3d",result[i][j]);
+            }
+            System.out.println();
+        }
+        return result;
+    }
+
+    public void removeEdge(String vertLabel) {
+        /* Find all the edges that contains vertLabel and remove it from the edges map */
+        int index = 0;
+        String removeLabel[] = new String[index+1];
+        for(Map.Entry<String, Integer> entry: edges.entrySet()) {
+            if(entry.getKey().indexOf(vertLabel) >= 0) {
+                removeLabel[index] = entry.getKey();
+                index++;
+                removeLabel = Arrays.copyOf(removeLabel, index+1); 
+            }
+        }
+        removeLabel = Arrays.copyOfRange(removeLabel, 0, index);
+        if(removeLabel.length > 0) {
+            for (int i = 0; i < removeLabel.length; i++) {
+                edges.remove(removeLabel[i]);
+            }
+        }
     }
 
     public void removeVertex(String vertLabel) {
-        Integer rowPosition = -1;
-        Integer colPosition = -1;
-
-        for (Map.Entry<String, Integer> entry : vertex.entrySet()) {
-            String key = entry.getKey();
-            if(key.equals(vertLabel)){
-                rowPosition = entry.getValue();
-            } 
+        int rowPosition = getVertexPosition(vertLabel);
+        int[] colPosition = getEdgePosition(vertLabel);
+        if(rowPosition > 0) {
+            /* If there is a vertex, remove that vertex and all the edges contains that vertex */
+            vertex.remove(vertLabel);
+            removeEdge(vertLabel);
+        } else {
+            System.out.println("Can't find vertex of " + vertLabel);
         }
-        System.out.println(rowPosition);
-        if(edges.size() > 0) {
-            colPosition = removeEdge(vertLabel);
-            if(rowPosition >= 0 && colPosition >= 0) {
-                weights[rowPosition][colPosition] = 0; // remove associated weight from array
-            } else {
-                System.out.println("Can't find vertex " + vertLabel);
-            }
+        if(colPosition[0] != EDGE_NOT_EXIST) {
+            /* Update the weights array */
+            weights = clearWeight(weights, rowPosition, colPosition);
         }
-        vertex.remove(vertLabel); // remove vertex from the map
     } // end of removeVertex()
 
     public List<MyPair> sortMyPairs(List<MyPair> myPair) {
@@ -295,7 +357,7 @@ public class IncidenceMatrix extends AbstractAssocGraph
             String a = key.substring(0, 1);
             String b = key.substring(1, 2);
             int weight = getEdgeWeight(a, b);
-            System.out.printf("[+] Edge: %s\n[+] Weight: %s\n", key, weight);
+            System.out.printf("[+] Edge: %s [+] Weight: %s\n", key, weight);
         }
 
     } // end of printEdges()
