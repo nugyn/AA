@@ -17,8 +17,8 @@ public class IncidenceMatrix extends AbstractAssocGraph
 	 */
     private int row = 0; // The global variable, to determine the new size of the weight array, as well as the vertex position.
     private int col = 0; // The global variable, to determine the new size of the weight array, as well as the edges position.
-    private Map<String, Integer> vertex = new HashMap<String, Integer>();
-    private Map<String, Integer> edges = new HashMap<String, Integer>();
+    private Map<String, Integer> vertex = new LinkedHashMap<String, Integer>();
+    private Map<String, Integer> edges = new LinkedHashMap<String, Integer>();
     private int weights[][] = new int[row][col];
     /* 
      * Every time iterate through array use array.length - 1 because of the null extra item
@@ -52,124 +52,75 @@ public class IncidenceMatrix extends AbstractAssocGraph
 
     public void addEdge(String srcLabel, String tarLabel, int weight) {
         /*
-        This is function creates a new edge in the edge map, defines it's position in weights
-        The col value, is the incremented (this is for the next edge position to be determined)
-        The [][] coordiante is determined by retrieving the vertex and edge position, 
-        The two weights associated with the edge is added into the 2D array.
+            This is function creates a new edge in the edge map, defines it's position in weights
+            The col value, is the incremented (this is for the next edge position to be determined)
+            The [][] coordiante is determined by retrieving the vertex and edge position, 
+            The two weights associated with the edge is added into the 2D array.
         */
         
         String newEdge = srcLabel + tarLabel; 
-        int indR = -1;
-        try {
-            indR = vertex.get(tarLabel);
-        } catch (Exception e) {
-            System.out.println("Error: Vertex " + tarLabel + " doesn't exist");
+        int indR = getVertexPosition(tarLabel);
+        int indA = getVertexPosition(srcLabel);
+        if(indR >= 0 && indA >= 0) {
+            edges.put(newEdge, col);
+            col++;
+            int indB = edges.get(newEdge);
+            weights = extend(weights, row, col);
+            weights[indA][indB] = weight;
+            weights[indR][indB] = -weight;
+        } else {
+            System.out.println("Error: Vertex " + (indR < 0 ? tarLabel : indA < 0 ? srcLabel : "undefined") + " doesn't exist");
         }
-        if(indR >= 0) {
-            try{
-                edges.put(newEdge, col);
-                col++;
-                int indA = vertex.get(srcLabel);
-                int indB = edges.get(newEdge);
-                weights = extend(weights, row, col); // increases the size of the array.Array
-                weights[indA][indB] = weight;
-                weights[indR][indB] = -weight;
-            } catch (Exception e) {
-                System.out.println("Error: Vertex " + srcLabel + " doesn't exist");
-            }
-           
-        }
+       
     } // end of addEdge()
 
-    // public void debug(String srcLabel, String tarLabel, MyPair pair) {
-    //     System.out.printf("srcLabel: %s\ntarLabel: %s\nMyPairKey: %s\n"+
-    //     "MyPairValue: %s\nsrcLabel+tarLabel: %s\n", srcLabel, tarLabel, 
-    //     pair.getKey(), pair.getValue(), srcLabel+tarLabel);
-    // }
-
-    // public void printArray(MyPair arrPair[]) {
-    //     System.out.println("Array length:" + arrPair.length);
-    //     for(int i = 0; i < arrPair.length-1; i++) {
-    //         System.out.printf("key: %s  Value: %s\n",arrPair[i].getKey(), arrPair[i].getValue());
-    //     }
-    // }
-
+ 
 	public int getEdgeWeight(String srcLabel, String tarLabel) {
-        // Implement me!
-        String edge = srcLabel + tarLabel;
-        int colPosition = -1;
-        int rowPosition = -1;
-        try {
-            colPosition = edges.get(edge);
-        } catch (Exception e) {
-            System.out.println("Error: " + edge + " edge doesn't exist");
-        }
-    
-        try{
-            rowPosition = vertex.get(srcLabel);
-        } catch (Exception e) {
-            System.out.println("Error: " + srcLabel + " vertex doesn't exist.");
-        }
-        if(rowPosition >= 0 && colPosition >= 0) {
-            int edgeWeight = weights[rowPosition][colPosition];
+        /* Call getPosition with srcLabel and TarLabel to find the position and return
+        the index according to the array */
+        int[] index = getPosition(srcLabel, tarLabel);
+        if(index[0] >= 0 && index[1] >= 0) {
+            int edgeWeight = weights[index[0]][index[1]];
             return edgeWeight;
         }
         return EDGE_NOT_EXIST;
 	} // end of existEdge()
 
     public int[] getPosition(String srcLabel, String tarLabel) {
+        /* Get position of vertex and it's relative edge with tarLabel. This position will return
+        an Array, first item is its row position and second item is its column position. */
         String edge = srcLabel + tarLabel;
         int colPosition = -1;
-        int rowPosition = -1;
-        if(!tarLabel.isEmpty()) {
-            try {
-                colPosition = edges.get(edge);
-            } catch (Exception e) {
-                System.out.println("Error: " + edge + " edge doesn't exist");
-            }
-        }
-        try{
-            rowPosition = vertex.get(srcLabel);
+        int rowPosition = getVertexPosition(srcLabel);
+        try {
+            colPosition = edges.get(edge);
         } catch (Exception e) {
-            System.out.println("Error: " + srcLabel + " vertex doesn't exist.");
+            /* DO NOTHING */
         }
-        int result[] = new int[]{colPosition, rowPosition};
+        int result[] = new int[]{rowPosition,colPosition};
         return result;
     }
 
 	public void updateWeightEdge(String srcLabel, String tarLabel, int weight) {
+        /* 
+         * Get the reverse Row position and row position, update according to its column position
+         */
         String edge = srcLabel + tarLabel;
-        String oppEdge = tarLabel + srcLabel;
-        int colPosition = -1;
-        int rowPosition = -1;
-        int oppRowPosition = -1;
-        try {
-            colPosition = edges.get(edge);
-        } catch (Exception e) {
-            System.out.println("Error: " + edge + " edge doesn't exist");
-        }
-        
-        try{
-            rowPosition = vertex.get(srcLabel);
-            oppRowPosition = vertex.get(tarLabel);
-        } catch (Exception e) {
-            System.out.println("Error: vertex doesn't exist.");
-        }
-        if(rowPosition >= 0 && colPosition >= 0 && oppRowPosition >= 0) {
-            weights[rowPosition][colPosition] = weight;
-            weights[oppRowPosition][colPosition] = -weight;
+        int indR = getVertexPosition(tarLabel);
+        int indA = getVertexPosition(srcLabel);
+     
+        if(indA >= 0 && indR >= 0) {
+            int indB = edges.get(edge);
+            weights[indA][indB] = weight;
+            weights[indR][indB] = -weight;
+        } else {
+            System.out.println("Error: Vertex " + (indR < 0 ? tarLabel : indA < 0 ? srcLabel : "undefined") + " doesn't exist");
         }
 
     } // end of updateWeightEdge()
-    public String printArr(int[] arr) {
-        String result = "";
-        for (int i = 0; i < arr.length; i++) {
-            result += arr[i];
-            result += " ";
-        }
-        return result;
-    }
+    
     public int[] getEdgePosition(String vertLabel) {
+        /* get list of edges index that contains vertLabel*/
         int index = 0;
         int result[] = new int[index+1];
         boolean found = false;
@@ -182,17 +133,15 @@ public class IncidenceMatrix extends AbstractAssocGraph
             }
         }
         result = Arrays.copyOfRange(result, 0, index);
-        System.out.println("List of edges: " + printArr(result));
         if(found == false) {
             result[0] = EDGE_NOT_EXIST;
         }
         return result;
     }
     public int getVertexPosition(String vertLabel) {
-        for(Map.Entry<String, Integer> entry: vertex.entrySet()) {
-            if(entry.getKey().indexOf(vertLabel) >= 0) {
-                return entry.getValue();
-            }
+        /* Get the vertex position from vertex map */
+        if(vertex.containsKey(vertLabel)) {
+            return vertex.get(vertLabel);
         }
         return EDGE_NOT_EXIST;
     }
@@ -211,32 +160,21 @@ public class IncidenceMatrix extends AbstractAssocGraph
 
     public int[][] clearWeight(int[][] weights, int indVertex, int[] indEdges) {
         /* Create a new matrix without the removed vertex and edges */
-        System.out.println("Row to remove: " + indVertex + " Column to remove: " + printArr(indEdges));
         int result[][] = new int[row-1][col - indEdges.length];
         int mRow = 0;
         int mCol = 0;
-        System.out.println("Result length: " + result.length + " " + result[0].length);
         for (int i = 0; i < weights.length; i++) {
-            System.out.println("> Row: " + i);
             if(i != indVertex) {
                 for(int j = 0; j < weights[i].length; j++) {
-                    System.out.println(">> Checking if " + j + " in " + printArr(indEdges));
                     if(checkValidColumn(j, indEdges)) {
                         mRow %= result.length;
                         mCol %= result[0].length;
                         result[mRow][mCol] = weights[i][j];
-                        System.out.println("+++ Adding " + weights[i][j] + "into [" + mRow + ", " + mCol + "]");
                         mCol++;
                     }
                 }
                 mRow++;
             }
-        }
-        for (int i = 0; i < result.length; i++) {
-            for(int j = 0; j < result[i].length; j++) {
-                System.out.printf("%3d",result[i][j]);
-            }
-            System.out.println();
         }
         return result;
     }
@@ -263,7 +201,7 @@ public class IncidenceMatrix extends AbstractAssocGraph
     public void removeVertex(String vertLabel) {
         int rowPosition = getVertexPosition(vertLabel);
         int[] colPosition = getEdgePosition(vertLabel);
-        if(rowPosition > 0) {
+        if(rowPosition >= 0) {
             /* If there is a vertex, remove that vertex and all the edges contains that vertex */
             vertex.remove(vertLabel);
             removeEdge(vertLabel);
@@ -271,11 +209,29 @@ public class IncidenceMatrix extends AbstractAssocGraph
             System.out.println("Can't find vertex of " + vertLabel);
         }
         if(colPosition[0] != EDGE_NOT_EXIST) {
-            /* Update the weights array */
+            /* If there is index of edges, update the weights array */
             weights = clearWeight(weights, rowPosition, colPosition);
+            /* Once removed all the rows and columns, need to update the index 
+            back to the map*/
+            reallocateIndex();
         }
     } // end of removeVertex()
-
+    public void reallocateIndex() {
+        /* This function reallocates the index of edges and vertex. It will update
+        the correct index of each item after a change size of the matrix */
+        int i = 0;
+        int j = 0;
+        for(Map.Entry<String, Integer> edge: edges.entrySet()) {
+            edges.put(edge.getKey(), i);
+            i++;
+        }
+        for(Map.Entry<String, Integer> vertlabel: vertex.entrySet()) {
+            vertex.put(vertlabel.getKey(),j);
+            j++;
+        }
+        row = j;
+        col = i;
+    }
     public List<MyPair> sortMyPairs(List<MyPair> myPair) {
         /* Using Bubble Sort to sort MyPair list*/
         for (int i = 0; i <= myPair.size()-2; i++) {
@@ -289,8 +245,10 @@ public class IncidenceMatrix extends AbstractAssocGraph
     }
 
 	public List<MyPair> inNearestNeighbours(int k, String vertLabel) {
+        /* Return in nearest neighbours, search for the row that contains vertLabel. 
+        And search for any weights that smaller than 0 */
         List<MyPair> neighbours = new ArrayList<MyPair>();
-        int index = getPosition(vertLabel, "")[1];
+        int index = getVertexPosition(vertLabel);
 
         for(int i = 0; i < weights[index].length; i++) {
             if(weights[index][i] < 0) {
@@ -301,20 +259,28 @@ public class IncidenceMatrix extends AbstractAssocGraph
                         label = entry.getKey().substring(0,1);
                     }
                 }
-                System.out.println("Label: " + label);
                 if(!label.isEmpty())
                     neighbours.add(new MyPair(label,weights[index][i]));
             }
         }
         neighbours = sortMyPairs(neighbours);
+        if(k != -1) {
+            try {
+                neighbours = neighbours.subList(0,k);
+            } catch (IndexOutOfBoundsException e) {
+                System.out.println("Out of bound Index, please choose less than "
+                 + neighbours.size());
+            }
+        }
         return neighbours;
     } // end of inNearestNeighbours()
 
 
     public List<MyPair> outNearestNeighbours(int k, String vertLabel) {
+          /* Return out nearest neighbours, search for the row that contains vertLabel. 
+        And search for any weights that larger than 0 */
         List<MyPair> neighbours = new ArrayList<MyPair>();
-        // Implement me!
-        int index = getPosition(vertLabel, "")[1];
+        int index = getVertexPosition(vertLabel);
 
         for(int i = 0; i < weights[index].length; i++) {
             if(weights[index][i] > 0) {
@@ -325,39 +291,49 @@ public class IncidenceMatrix extends AbstractAssocGraph
                         label = entry.getKey().substring(1,2);
                     }
                 }
-                System.out.println("Label: " + label);
                 if(!label.isEmpty())
                     neighbours.add(new MyPair(label,weights[index][i]));
             }
         }
         neighbours = sortMyPairs(neighbours);
+        if(k != -1) {
+            try {
+                neighbours = neighbours.subList(0,k);
+            } catch (IndexOutOfBoundsException e) {
+                System.out.println("Out of bound Index, please choose less than "
+                 + neighbours.size());
+            }
+        }
         return neighbours;
     } // end of outNearestNeighbours()
 
 
     public void printVertices(PrintWriter os) {
+        /* Print all the vertices in vertex map */
         for (Map.Entry<String, Integer> entry : vertex.entrySet()) {
             String key = entry.getKey();
-            System.out.println(key);
-       }
-
+            os.printf("%s ", key);
+        }
+        os.println();
     } // end of printVertices()
 
 
     public void printEdges(PrintWriter os) {
-        for(int i = 0; i < weights.length; i++) {
-            System.out.print("[");
-            for(int j = 0; j < weights[i].length; j++) {
-                System.out.printf("%3d ", weights[i][j]);
-            }
-            System.out.println("]");
-        }
+        /* Print all of the edges */
+        // for(int i = 0; i < weights.length; i++) {
+        //     System.out.print("[");
+        //     for(int j = 0; j < weights[i].length; j++) {
+        //         System.out.printf("%3d ", weights[i][j]);
+        //     }
+        //     System.out.println("]");
+        // }
         for (Map.Entry<String, Integer> entry : edges.entrySet()) {
             String key = entry.getKey();
             String a = key.substring(0, 1);
             String b = key.substring(1, 2);
             int weight = getEdgeWeight(a, b);
-            System.out.printf("[+] Edge: %s [+] Weight: %s\n", key, weight);
+            if(weight != 0)
+                os.printf("%s %s %s\n", a, b, weight);
         }
 
     } // end of printEdges()
