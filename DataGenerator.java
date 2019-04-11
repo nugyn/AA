@@ -17,26 +17,18 @@ public class DataGenerator{
 			String density = sc.nextLine();
 			if(density.equalsIgnoreCase("L")){
 				try {
-
                     BufferedReader reader = new BufferedReader(new FileReader(inputFilename + ".csv"));
-
                     PrintWriter pw = new PrintWriter(new FileWriter(outputFilename + ".csv"), true);
-
                     String line;
-
                     String delimiter = ",";
-
                     String[] tokens;
-
                     String srcLabel, tarLabel;
-
                     int weight;
-
                     int i = 0;
+
 					while ((line = reader.readLine()) != null && i <= amtEdges/3 ) {
 						tokens = line.split(delimiter);
                         srcLabel = tokens[0];
-
                         tarLabel = tokens[1];
 
                         weight = Integer.parseInt(tokens[2]);
