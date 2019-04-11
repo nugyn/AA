@@ -325,13 +325,6 @@ public class IncidenceMatrix extends AbstractAssocGraph
 
     public void printEdges(PrintWriter os) {
         /* Print all of the edges */
-        // for(int i = 0; i < weights.length; i++) {
-        //     System.out.print("[");
-        //     for(int j = 0; j < weights[i].length; j++) {
-        //         System.out.printf("%3d ", weights[i][j]);
-        //     }
-        //     System.out.println("]");
-        // }
         for (Map.Entry<String, Integer> entry : edges.entrySet()) {
             String key = entry.getKey();
             String a = key.substring(0, 1);
