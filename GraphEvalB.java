@@ -120,10 +120,10 @@ public class GraphEvalB
 						if (tokens.length == 2) {
 							
 							Scanner sc = new Scanner(System.in);
-							System.out.println("Graph: "); 
-							String graphName = sc.nextLine();
+							// System.out.println("Graph: "); 
+							// String graphName = sc.nextLine();
 
-							BufferedReader br = new BufferedReader(new FileReader(graphName));
+							BufferedReader br = new BufferedReader(new FileReader(inputFilename));
 							String lineRV = "";
 							String delimiter = ",";
 							String[] tokensRV = {};
@@ -152,7 +152,9 @@ public class GraphEvalB
 							}
 								System.out.println("Time Taken for first vertex and edge remove: " + timeTaken);
 								System.out.println("Time Taken for second vertex and edge remove: " + timeTaken2);
-
+								BufferedWriter writer = new BufferedWriter(new FileWriter("result_" +inputFilename + ".txt", true));
+								writer.write(timeTaken + " " + timeTaken2 + " ");
+								writer.close();
 								bQuit = false;
 								break;
 						}
