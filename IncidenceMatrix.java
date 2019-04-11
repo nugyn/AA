@@ -110,9 +110,13 @@ public class IncidenceMatrix extends AbstractAssocGraph
         int indA = getVertexPosition(srcLabel);
      
         if(indA >= 0 && indR >= 0) {
-            int indB = edges.get(edge);
-            weights[indA][indB] = weight;
-            weights[indR][indB] = -weight;
+            if(edges.containsKey(edge)) {
+                int indB = edges.get(edge);
+                weights[indA][indB] = weight;
+                weights[indR][indB] = -weight;
+            } else {
+                System.out.println("Error: " + edge + " does not exist in edges");
+            }
         } else {
             System.out.println("Error: Vertex " + (indR < 0 ? tarLabel : indA < 0 ? srcLabel : "undefined") + " doesn't exist");
         }
@@ -132,7 +136,7 @@ public class IncidenceMatrix extends AbstractAssocGraph
                 result = Arrays.copyOf(result, index+1); 
             }
         }
-        result = Arrays.copyOfRange(result, 0, index);
+        result = Arrays.copyOfRange(result, 0, (index > 0 ? index : 1));
         if(found == false) {
             result[0] = EDGE_NOT_EXIST;
         }
@@ -260,7 +264,8 @@ public class IncidenceMatrix extends AbstractAssocGraph
                     }
                 }
                 if(!label.isEmpty())
-                    neighbours.add(new MyPair(label,weights[index][i]));
+                    /* Because weight < 0. We need to convert it back to > 0*/ 
+                    neighbours.add(new MyPair(label,-weights[index][i]));
             }
         }
         neighbours = sortMyPairs(neighbours);
