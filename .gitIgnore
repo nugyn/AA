@@ -4,3 +4,6 @@ test1-adjlist.misc.out
 test1-adjlist.neigh.out
 test1-adjlist.vert.out
 *.out
+AssociationGraph.class
+AssociationGraph.class
+DataGenerator.class

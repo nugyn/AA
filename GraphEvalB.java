@@ -43,7 +43,7 @@ public class GraphEvalB
 	 * @throws IOException If there is an exception to do with I/O.
 	 */
 	public static void processOperations(BufferedReader inReader, AssociationGraph graph,
-			PrintWriter verticesOutWriter, PrintWriter edgesOutWriter, PrintWriter neighbourOutWriter, PrintWriter miscOutWriter)
+			PrintWriter verticesOutWriter, PrintWriter edgesOutWriter, PrintWriter neighbourOutWriter, PrintWriter miscOutWriter, String inputFilename)
 		throws IOException
 	{
 		String line;
@@ -120,12 +120,12 @@ public class GraphEvalB
 						if (tokens.length == 2) {
 							
 							Scanner sc = new Scanner(System.in);
-							System.out.println("Graph: "); 
-							String graphName = sc.nextLine();
+							// System.out.println("Graph: "); 
+							// String graphName = sc.nextLine();
 
-							BufferedReader br = new BufferedReader(new FileReader(graphName));
+							BufferedReader br = new BufferedReader(new FileReader(inputFilename));
 							String lineRV = "";
-							String delimiter = "";
+							String delimiter = ",";
 							String[] tokensRV = {};
 							String vertA, vertB;
 							int i = 0;
@@ -152,7 +152,9 @@ public class GraphEvalB
 							}
 								System.out.println("Time Taken for first vertex and edge remove: " + timeTaken);
 								System.out.println("Time Taken for second vertex and edge remove: " + timeTaken2);
-
+								BufferedWriter writer = new BufferedWriter(new FileWriter("result_" +inputFilename + ".txt", true));
+								writer.write(timeTaken + " " + timeTaken2 + " ");
+								writer.close();
 								bQuit = false;
 								break;
 						}
@@ -352,7 +354,7 @@ public class GraphEvalB
 
 
 			// process the operations
-			processOperations(inReader, graph, verticesOutWriter, edgesOutWriter, neighbourOutWriter, miscOutWriter);
+			processOperations(inReader, graph, verticesOutWriter, edgesOutWriter, neighbourOutWriter, miscOutWriter, inputFilename);
 		} catch (IOException e) {
 			System.err.println(e.getMessage());
 		}
