@@ -102,143 +102,266 @@ public class GraphEvalB
 						break;
 					// update weight of edge
 					case "U":
-						if (tokens.length == 4) {
-							int weight = Integer.parseInt(tokens[3]);
-							if (weight < 0) {
-								System.err.println(lineNum + ": edge weight must be non-negative.");
-							}
-							else {
-								graph.updateWeightEdge(tokens[1], tokens[2], weight);
-							}
+						
+						BufferedReader edgeReader = new BufferedReader(new FileReader(inputFilename));
+						String edgeLine;
+						String delimi = ",";
+						String edgeTokens[];
+
+						long edgeTime = 0;
+						long edgeTime2 = 0;
+						long updateEdgeTime = 0;
+
+						BufferedWriter edgeWriter = new BufferedWriter(new FileWriter("[UPDATE]result_" + inputFilename));
+						while((edgeLine = edgeReader.readLine()) != null){
+							edgeTokens = edgeLine.split(delimi);
+
+							edgeTime = System.nanoTime();
+							graph.updateWeightEdge(edgeTokens[0], edgeTokens[1], 1);
+							edgeTime2 = System.nanoTime();
+							updateEdgeTime = edgeTime2 - edgeTime; 
+							System.out.println(updateEdgeTime);
+							edgeWriter.write(updateEdgeTime + " ");
 						}
-						else {
-							System.err.println(lineNum + ": incorrect number of tokens.");
-						}
+						edgeWriter.close();
+
 						break;
 					// remove vertex
 					case "RV":
-						if (tokens.length == 2) {
 							
 							Scanner sc = new Scanner(System.in);
 							// System.out.println("Graph: "); 
 							// String graphName = sc.nextLine();
 
 							BufferedReader br = new BufferedReader(new FileReader(inputFilename));
+							BufferedWriter writer = new BufferedWriter(new FileWriter("result_" +inputFilename + ".txt", true));
+
 							String lineRV = "";
 							String delimiter = ",";
 							String[] tokensRV = {};
 							String vertA, vertB;
 							int i = 0;
-							long time1, time2, time3, time4, timeTaken = 0;
-							long timeTaken2 = 0;
+							long time1RV = 0;
+							long time2RV = 0;
+							long time3RV = 0;
+							long time4RV = 0;
+							long timeTakenRV = 0;
+							long timeTaken2RV = 0;
 
 							while((line = br.readLine()) != null){
 								tokensRV = line.split(delimiter);
 								vertA = tokensRV[0];
 								vertB = tokensRV[1];
 
-								time1 = System.nanoTime();
+								time1RV = System.nanoTime();
 								graph.removeVertex(vertA);
-								time2 = System.nanoTime();
-								timeTaken = time2 - time1;
+								time2RV = System.nanoTime();
+								timeTakenRV = time2RV - time1RV;
 
-								time3 = System.nanoTime();
+								time3RV = System.nanoTime();
 								graph.removeVertex(vertB);
-								time4 = System.nanoTime();
-								timeTaken2 = time4 - time3;
+								time4RV = System.nanoTime();
+								timeTaken2RV = time4RV - time3RV;
 
+								writer.write(timeTakenRV + " " + timeTaken2RV + " ");
+								time1RV = 0;
+								time2RV = 0;
+								timeTakenRV = 0;
+								time3RV = 0;
+								time4RV = 0;
+								timeTaken2RV = 0;
 								System.out.println("Removing " + i);
 								i++;
 							}
-								System.out.println("Time Taken for first vertex and edge remove: " + timeTaken);
-								System.out.println("Time Taken for second vertex and edge remove: " + timeTaken2);
-								BufferedWriter writer = new BufferedWriter(new FileWriter("result_" +inputFilename + ".txt", true));
-								writer.write(timeTaken + " " + timeTaken2 + " ");
-								writer.close();
-								bQuit = false;
-								break;
-						}
-						else {
-							System.err.println(lineNum + ": incorrect number of tokens.");
-						}
+						br.close();
+						writer.close();
 						break;
 					// k-nearest out-neighbourhood
 					case "ON":
 					
-						BufferedReader br = new BufferedReader(new FileReader(inputFilename));
-						String lineRV = "";
-						String delimiter = ",";
+						BufferedReader brON = new BufferedReader(new FileReader(inputFilename));
+						BufferedWriter writerAON = new BufferedWriter(new FileWriter("[ON]result_" + inputFilename + ".txt", true));
+						BufferedWriter writerBON = new BufferedWriter(new FileWriter("[ON]result_" + inputFilename + ".txt", true));
+						String lineON = "";
+						String delimiterON = ",";
 						String[] tokensON = {};
 						int k = -1 ;
-						String vertA = "";
-						String vertB = "";
-						int size = 0;
-						long time1, time2, time3, time4 = 0;
-						long timeTaken = 0; 
-						long timeTaken2 = 0;
-						while((line = br.readLine()) != null) {
-						tokensON = line.split(delimiter);
+						String vertAON = "";
+						String vertBON = "";
+						int sizeAON = 0;
+						int sizeBON = 0;
+						long time1ON = 0;
+						long time2ON = 0;
+						long time3ON = 0; 
+						long time4ON = 0;
+						long timeTakenAON = 0; 
+						long timeTakenBON = 0;
+						while((lineON = brON.readLine()) != null) {
+						tokensON = lineON.split(delimiterON);
 						
 							
 						// To get IN neighbours, you will need to define k.
 						// K cannot be more than amount of vertices of graph. 
 						// We need to find the nearest neighbours, for all K, including -1. k = n - 1
 
-							vertA = tokensON[0];
-							vertB = tokensON[1];
+						/*
+							Obtain -1 all possible pairs
+							Define the next interation, to be from k - n, where n++;
+							possible pairs decrease as k decreases.
+						*/
+
+							vertAON = tokensON[0];
+							vertBON = tokensON[1];
 
 						//K needs to increment until it reaches n - 1 (not including the Vertice being ON'ed);
-							
-							if(size < 1){
-							time1 = System.nanoTime();
-							List<MyPair> neighboursA = graph.outNearestNeighbours(k, vertA);
-							time2 = System.nanoTime();
-							timeTaken = time2 - time1;
-
-							time3 = System.nanoTime();
-							List<MyPair> neighboursB = graph.outNearestNeighbours(k, vertB);
-							time4 = System.nanoTime();
-							timeTaken2 = time2 - time1;
-
-								StringBuffer buf = new StringBuffer();
-								for (MyPair neigh : neighboursA) {
-									buf.append(" (" + neigh.getKey() + "," + neigh.getValue() + ")");
-									size++;
+							if(sizeAON < 1){
+							time1ON = System.nanoTime();
+							List<MyPair> neighboursA = graph.outNearestNeighbours(k, vertAON);
+							time2ON = System.nanoTime();
+							timeTakenAON = time2ON - time1ON;
+							sizeAON = neighboursA.size();
+							writerAON.write(timeTakenAON + " ");
+							time1ON = 0;
+							time2ON = 0;
+							timeTakenAON = 0;
+							}							
+							System.out.println("===================" + sizeAON);
+							if(sizeAON >=1){
+								for(int y = 0; y < sizeAON; y++){
+									time1ON = System.nanoTime();
+									List<MyPair> neighboursA = graph.outNearestNeighbours(y, vertAON);
+									time2ON = System.nanoTime();
+									timeTakenAON = time2ON - time1ON;
+									writerAON.write(timeTakenAON + " ");
+									time1ON = 0;
+									time2ON = 0;
+									timeTakenAON = 0;
 								}
 							}
-							
-							else if(size >= 1){
-								for(int j = 0; j < size; j++){
-								List<MyPair> neighboursA = graph.outNearestNeighbours(j, vertA);
-								List<MyPair> neighboursB = graph.outNearestNeighbours(j, vertB);
+
+							if(sizeBON < 1){
+								time3ON = System.nanoTime();
+								List<MyPair> neighboursB = graph.outNearestNeighbours(k, vertBON);
+								time4ON = System.nanoTime();
+								timeTakenBON = time4ON - time3ON;
+								sizeBON = neighboursB.size();
+								writerBON.write(timeTakenBON + " ");
+								time3ON = 0;
+								time4ON = 0;
+								timeTakenBON = 0;
 								}
-							}
-						
-
-							BufferedWriter writer = new BufferedWriter(new FileWriter("[ON]result_" + inputFilename + ".txt", true));
-							writer.write(timeTaken + " " + timeTaken2 + " ");
-							writer.close();
-
+								System.out.println("===================" + sizeBON);
+								if(sizeBON >=1){
+									for(int y = 0; y < sizeBON; y++){
+										time3ON = System.nanoTime();
+										List<MyPair> neighboursA = graph.outNearestNeighbours(y, vertBON);
+										time4ON = System.nanoTime();
+										timeTakenBON = time2ON - time1ON;
+										writerBON.write(timeTakenBON + " ");
+										time3ON = 0;
+										time4ON = 0;
+										timeTakenBON = 0;
+									}
+								}
+			
+							sizeAON = 0;
+							sizeBON = 0;
 						}
-						size = 0;
+						writerAON.close();	
+						writerBON.close();			
+						brON.close();	
 						break;
 					// k-nearest in-neighbourhood
 					case "IN":
-						if (tokens.length == 3) {
-							List<MyPair> neighbours = graph.inNearestNeighbours(Integer.parseInt(tokens[1]), tokens[2]);
-							StringBuffer buf = new StringBuffer();
-							for (MyPair neigh : neighbours) {
-								buf.append(" (" + neigh.getKey() + "," + neigh.getValue() + ")");
+					BufferedReader brIN = new BufferedReader(new FileReader(inputFilename));
+					BufferedWriter writerAIN = new BufferedWriter(new FileWriter("[IN]result_" + inputFilename + ".txt", true));
+					BufferedWriter writerBIN = new BufferedWriter(new FileWriter("[IN]result_" + inputFilename + ".txt", true));
+					String lineIN = "";
+					String delimiterIN = ",";
+					String[] tokensIN = {};
+					int kIN = -1 ;
+					String vertAIN = "";
+					String vertBIN = "";
+					int sizeINA = 0;
+					int sizeINB = 0;
+					long time1IN = 0;
+					long time2IN = 0;
+					long time3IN = 0;
+					long time4IN = 0;
+					long timeTakenAIN = 0; 
+					long timeTakenBIN = 0;
+					while((lineIN = brIN.readLine()) != null) {
+					tokensIN = lineIN.split(delimiterIN);
+					
+						
+					// To get IN neighbours, you will need to define k.
+					// K cannot be more than amount of vertices of graph. 
+					// We need to find the nearest neighbours, for all K, including -1. k = n - 1
+
+					/*
+						Obtain -1 all possible pairs
+						Define the next interation, to be from k - n, where n++;
+						possible pairs decrease as k decreases.
+					*/
+
+						vertAIN = tokensIN[0];
+						vertBIN = tokensIN[1];
+
+					//K needs to increment until it reaches n - 1 (not including the Vertice being ON'ed);
+						if(sizeINA < 1){
+						time1IN = System.nanoTime();
+						List<MyPair> neighboursA = graph.inNearestNeighbours(kIN, vertAIN);
+						time2IN = System.nanoTime();
+						timeTakenAIN = time2IN - time1IN;
+						sizeINA = neighboursA.size();
+						writerAIN.write(timeTakenAIN + " ");
+						}
+						System.out.println("===================" + sizeINA);
+						if(sizeINA >=1){
+							for(int y = 0; y < sizeINA; y++){
+								time1IN = System.nanoTime();
+								List<MyPair> neighboursA = graph.inNearestNeighbours(y, vertAIN);
+								time2IN = System.nanoTime();
+								timeTakenAIN = time2IN - time1IN;
+								writerAIN.write(timeTakenAIN + " ");
+
+								time1IN = 0;
+								time2IN = 0;
+								timeTakenAIN = 0;
+							}
+						}
+						
+						if(sizeINB < 1){
+							time3IN = System.nanoTime();
+							List<MyPair> neighboursB = graph.inNearestNeighbours(kIN, vertBIN);
+							time4IN = System.nanoTime();
+							timeTakenBIN = time4IN - time3IN;
+							sizeINB = neighboursB.size();
+							writerBIN.write(timeTakenBIN + " ");
+							}
+							System.out.println("===================" + sizeINB);
+							if(sizeINB >=1){
+								for(int y = 0; y < sizeINB; y++){
+									time3IN = System.nanoTime();
+									List<MyPair> neighboursA = graph.inNearestNeighbours(y, vertBIN);
+									time4IN = System.nanoTime();
+									timeTakenBIN = time4IN - time3IN;
+									writerBIN.write(timeTakenBIN + " ");
+									time3IN = 0;
+									time4IN = 0;
+									timeTakenBIN = 0;
+								}
 							}
 
-							neighbourOutWriter.println(tokens[2] + buf.toString());
-						}
-						else {
-							System.err.println(lineNum + ": incorrect number of tokens.");
-						}
+						sizeINA = 0;
+						sizeINB = 0;
+					}
+					writerAIN.close();	
+					writerBIN.close();
+					brIN.close();
+					break;// print vertices
 
-						break;
-					// print vertices
+
 					case "PV":
 						graph.printVertices(verticesOutWriter);
 						break;
@@ -339,13 +462,13 @@ public class GraphEvalB
 				try {
 					BufferedReader reader = new BufferedReader(new FileReader(inputFilename));
 					String line;
-					String delimiter = ",";
+					String delimiterON = ",";
 					String[] tokens;
 					String srcLabel, tarLabel;
 					int weight;
 					int i = 0;
 					while ((line = reader.readLine()) != null ) {
-						tokens = line.split(delimiter);
+						tokens = line.split(delimiterON);
 						srcLabel = tokens[0];
 						tarLabel = tokens[1];
 						weight = Integer.parseInt(tokens[2]);

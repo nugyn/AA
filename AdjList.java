@@ -252,7 +252,7 @@ public class AdjList extends AbstractAssocGraph
                 neighbours = neighbours.subList(0,k);
             } catch (IndexOutOfBoundsException e) {
                 System.out.println("Out of bound Index, please choose less than "
-                 + neighbours.size());
+                 + neighbours.size() + " You chose: " + k);
             }
         }
         return neighbours;
