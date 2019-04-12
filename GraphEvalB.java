@@ -43,7 +43,7 @@ public class GraphEvalB
 	 * @throws IOException If there is an exception to do with I/O.
 	 */
 	public static void processOperations(BufferedReader inReader, AssociationGraph graph,
-			PrintWriter verticesOutWriter, PrintWriter edgesOutWriter, PrintWriter neighbourOutWriter, PrintWriter miscOutWriter, String inputFilename)
+			PrintWriter verticesOutWriter, PrintWriter edgesOutWriter, PrintWriter neighbourOutWriter, PrintWriter miscOutWriter, String inputFilename, String implementationType)
 		throws IOException
 	{
 		String line;
@@ -112,14 +112,14 @@ public class GraphEvalB
 						long edgeTime2 = 0;
 						long updateEdgeTime = 0;
 
-						BufferedWriter edgeWriter = new BufferedWriter(new FileWriter("[UPDATE]result_" + inputFilename));
+						BufferedWriter edgeWriter = new BufferedWriter(new FileWriter("UPDATE_" + inputFilename + "_" + implementationType + "_.txt"));
 						while((edgeLine = edgeReader.readLine()) != null){
 							edgeTokens = edgeLine.split(delimi);
 
 							edgeTime = System.nanoTime();
 							graph.updateWeightEdge(edgeTokens[0], edgeTokens[1], 1);
 							edgeTime2 = System.nanoTime();
-							updateEdgeTime = edgeTime2 - edgeTime; 
+							updateEdgeTime = edgeTime2 - edgeTime;
 							System.out.println(updateEdgeTime);
 							edgeWriter.write(updateEdgeTime + " ");
 						}
@@ -134,7 +134,7 @@ public class GraphEvalB
 							// String graphName = sc.nextLine();
 
 							BufferedReader br = new BufferedReader(new FileReader(inputFilename));
-							BufferedWriter writer = new BufferedWriter(new FileWriter("result_" +inputFilename + ".txt", true));
+							BufferedWriter writer = new BufferedWriter(new FileWriter("REMOVE_" +inputFilename + "_" + implementationType + "_.txt", true));
 
 							String lineRV = "";
 							String delimiter = ",";
@@ -180,8 +180,8 @@ public class GraphEvalB
 					case "ON":
 					
 						BufferedReader brON = new BufferedReader(new FileReader(inputFilename));
-						BufferedWriter writerAON = new BufferedWriter(new FileWriter("[ON]result_" + inputFilename + ".txt", true));
-						BufferedWriter writerBON = new BufferedWriter(new FileWriter("[ON]result_" + inputFilename + ".txt", true));
+						BufferedWriter writerAON = new BufferedWriter(new FileWriter("ON_" + inputFilename + "_" + implementationType + "_.txt", true));
+						BufferedWriter writerBON = new BufferedWriter(new FileWriter("ON_" + inputFilename + "_" + implementationType + "_.txt", true));
 						String lineON = "";
 						String delimiterON = ",";
 						String[] tokensON = {};
@@ -274,8 +274,8 @@ public class GraphEvalB
 					// k-nearest in-neighbourhood
 					case "IN":
 					BufferedReader brIN = new BufferedReader(new FileReader(inputFilename));
-					BufferedWriter writerAIN = new BufferedWriter(new FileWriter("[IN]result_" + inputFilename + ".txt", true));
-					BufferedWriter writerBIN = new BufferedWriter(new FileWriter("[IN]result_" + inputFilename + ".txt", true));
+					BufferedWriter writerAIN = new BufferedWriter(new FileWriter("IN_" + inputFilename + "_" + implementationType + "_.txt", true));
+					BufferedWriter writerBIN = new BufferedWriter(new FileWriter("IN_" + inputFilename + "_" + implementationType + "_.txt", true));
 					String lineIN = "";
 					String delimiterIN = ",";
 					String[] tokensIN = {};
@@ -521,7 +521,7 @@ public class GraphEvalB
 
 
 			// process the operations
-			processOperations(inReader, graph, verticesOutWriter, edgesOutWriter, neighbourOutWriter, miscOutWriter, inputFilename);
+			processOperations(inReader, graph, verticesOutWriter, edgesOutWriter, neighbourOutWriter, miscOutWriter, inputFilename, implementationType);
 		} catch (IOException e) {
 			System.err.println(e.getMessage());
 		}
