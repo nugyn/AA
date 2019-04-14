@@ -67,3 +67,13 @@ adjlist: IN graphL_5k.csv : 137820
 adjlist: IN graphM_1k.csv : 110009
 adjlist: IN graphM_3k.csv : 238616
 adjlist: IN graphM_5k.csv : 893364
+
+incmat: IN graphH_1k.csv : 54164
+incmat: IN graphH_3k.csv : 112886
+incmat: IN graphH_5k.csv : 199099
+incmat: IN GraphL_1k.csv : 32495
+incmat: IN GraphL_3k.csv : 52457
+incmat: IN GraphL_5k.csv : 62958
+incmat: IN GraphM_1k.csv : 47886
+incmat: IN GraphM_3k.csv : 65897
+incmat: IN GraphM_5k.csv : 795377
