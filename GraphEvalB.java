@@ -216,7 +216,7 @@ public class GraphEvalB
 						//K needs to increment until it reaches n - 1 (not including the Vertice being ON'ed);
 							if(sizeAON < 1){
 							time1ON = System.nanoTime();
-							List<MyPair> neighboursA = graph.outNearestNeighbours(k, vertAON);
+							List<MyPair> neighboursA = graph.outNearestNeighbours(k, vertAONç);
 							time2ON = System.nanoTime();
 							timeTakenAON = time2ON - time1ON;
 							sizeAON = neighboursA.size();
