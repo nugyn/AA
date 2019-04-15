@@ -7,5 +7,5 @@ with open(file, 'r') as f:
         sum += int(itemList[i])
     result = sum/len(itemList)
     arg = file.split("_")
-    with open("DATA.md", 'a+') as w:
+    with open("DATA-Summary.md", 'a+') as w:
      w.write(arg[3] + ": " + arg[0] + " " + arg[1] + "_" + arg[2] + " : " + str(result) +"\n");
