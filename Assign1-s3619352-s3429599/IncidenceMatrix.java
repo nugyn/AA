@@ -28,8 +28,13 @@ public class IncidenceMatrix extends AbstractAssocGraph
     } // end of IncidentMatrix()
 
     public void addVertex(String vertLabel) {
-        vertex.put(vertLabel, row);
-        row++; 
+        boolean duplicated = false;
+        if(!vertex.containsKey(vertLabel)){
+            vertex.put(vertLabel, row);
+            row++; 
+        } else {
+            System.out.println("Error: vertex already exists");
+        }
     } // end of addVertex()
 
     
@@ -61,15 +66,24 @@ public class IncidenceMatrix extends AbstractAssocGraph
         String newEdge = srcLabel + tarLabel; 
         int indR = getVertexPosition(tarLabel);
         int indA = getVertexPosition(srcLabel);
-        if(indR >= 0 && indA >= 0) {
-            edges.put(newEdge, col);
-            col++;
-            int indB = edges.get(newEdge);
-            weights = extend(weights, row, col);
-            weights[indA][indB] = weight;
-            weights[indR][indB] = -weight;
+        boolean duplicated = false;
+        if(edges.containsKey(srcLabel + tarLabel)){
+            /* If in the edges */
+            duplicated = true;
+        }
+        if(duplicated == false) {
+            if(indR >= 0 && indA >= 0) {
+                edges.put(newEdge, col);
+                col++;
+                int indB = edges.get(newEdge);
+                weights = extend(weights, row, col);
+                weights[indA][indB] = weight;
+                weights[indR][indB] = -weight;
+            } else {
+                System.out.println("Error: Vertex " + (indR < 0 ? tarLabel : indA < 0 ? srcLabel : "undefined") + " doesn't exist");
+            }
         } else {
-            System.out.println("Error: Vertex " + (indR < 0 ? tarLabel : indA < 0 ? srcLabel : "undefined") + " doesn't exist");
+            System.out.println("Error: Edge already exists");
         }
        
     } // end of addEdge()
@@ -164,11 +178,13 @@ public class IncidenceMatrix extends AbstractAssocGraph
 
     public int[][] clearWeight(int[][] weights, int indVertex, int[] indEdges) {
         /* Create a new matrix without the removed vertex and edges */
-        int result[][] = new int[row-1][col - indEdges.length];
+        int result[][] = new int[row][col];
+
         int mRow = 0;
         int mCol = 0;
         for (int i = 0; i < weights.length; i++) {
             if(i != indVertex) {
+                /* If row isn't the vertLabel */
                 for(int j = 0; j < weights[i].length; j++) {
                     if(checkValidColumn(j, indEdges)) {
                         mRow %= result.length;
@@ -208,32 +224,38 @@ public class IncidenceMatrix extends AbstractAssocGraph
         if(rowPosition >= 0) {
             /* If there is a vertex, remove that vertex and all the edges contains that vertex */
             vertex.remove(vertLabel);
-            removeEdge(vertLabel);
+            reallocateVertex();
+            // removeEdge(vertLabel);
         } else {
             System.out.println("Can't find vertex of " + vertLabel);
         }
         if(colPosition[0] != EDGE_NOT_EXIST) {
+            /* We reallocate all the edges to copy to new array*/
+            removeEdge(vertLabel);
+            reallocateEdge();
+
             /* If there is index of edges, update the weights array */
             weights = clearWeight(weights, rowPosition, colPosition);
-            /* Once removed all the rows and columns, need to update the index 
-            back to the map*/
-            reallocateIndex();
         }
     } // end of removeVertex()
-    public void reallocateIndex() {
-        /* This function reallocates the index of edges and vertex. It will update
-        the correct index of each item after a change size of the matrix */
-        int i = 0;
+    public void reallocateVertex() {
+        /* This function reallocates the index of vertex. It will update
+        the correct index of each item after remove Vertex */
         int j = 0;
-        for(Map.Entry<String, Integer> edge: edges.entrySet()) {
-            edges.put(edge.getKey(), i);
-            i++;
-        }
         for(Map.Entry<String, Integer> vertlabel: vertex.entrySet()) {
             vertex.put(vertlabel.getKey(),j);
             j++;
         }
         row = j;
+    }
+    public void reallocateEdge() {
+        /* This function reallocates the index of edges. It will update
+        the correct index of each item after remove Edge  */
+        int i = 0;
+        for(Map.Entry<String, Integer> edge: edges.entrySet()) {
+            edges.put(edge.getKey(), i);
+            i++;
+        }       
         col = i;
     }
     public List<MyPair> sortMyPairs(List<MyPair> myPair) {
@@ -253,19 +275,20 @@ public class IncidenceMatrix extends AbstractAssocGraph
         And search for any weights that smaller than 0 */
         List<MyPair> neighbours = new ArrayList<MyPair>();
         int index = getVertexPosition(vertLabel);
-
-        for(int i = 0; i < weights[index].length; i++) {
-            if(weights[index][i] < 0) {
-                String label = "";
-                for(Map.Entry<String, Integer> entry: edges.entrySet()) {
-                    int value = entry.getValue();
-                    if(value == i) {
-                        label = entry.getKey().substring(0,1);
+        if(index != -1) {
+            for(int i = 0; i < weights[index].length; i++) {
+                if(weights[index][i] < 0) {
+                    String label = "";
+                    for(Map.Entry<String, Integer> entry: edges.entrySet()) {
+                        int value = entry.getValue();
+                        if(value == i) {
+                            label = entry.getKey().substring(0,1);
+                        }
                     }
+                    if(!label.isEmpty())
+                        /* Because weight < 0. We need to convert it back to > 0*/ 
+                        neighbours.add(new MyPair(label,-weights[index][i]));
                 }
-                if(!label.isEmpty())
-                    /* Because weight < 0. We need to convert it back to > 0*/ 
-                    neighbours.add(new MyPair(label,-weights[index][i]));
             }
         }
         neighbours = sortMyPairs(neighbours);
@@ -286,18 +309,19 @@ public class IncidenceMatrix extends AbstractAssocGraph
         And search for any weights that larger than 0 */
         List<MyPair> neighbours = new ArrayList<MyPair>();
         int index = getVertexPosition(vertLabel);
-
-        for(int i = 0; i < weights[index].length; i++) {
-            if(weights[index][i] > 0) {
-                String label = "";
-                for(Map.Entry<String, Integer> entry: edges.entrySet()) {
-                    int value = entry.getValue();
-                    if(value == i) {
-                        label = entry.getKey().substring(1,2);
+        if(index != -1) {
+            for(int i = 0; i < weights[index].length; i++) {
+                if(weights[index][i] > 0) {
+                    String label = "";
+                    for(Map.Entry<String, Integer> entry: edges.entrySet()) {
+                        int value = entry.getValue();
+                        if(value == i) {
+                            label = entry.getKey().substring(1,2);
+                        }
                     }
+                    if(!label.isEmpty())
+                        neighbours.add(new MyPair(label,weights[index][i]));
                 }
-                if(!label.isEmpty())
-                    neighbours.add(new MyPair(label,weights[index][i]));
             }
         }
         neighbours = sortMyPairs(neighbours);
@@ -324,6 +348,23 @@ public class IncidenceMatrix extends AbstractAssocGraph
 
 
     public void printEdges(PrintWriter os) {
+        // System.out.println("Edges:");
+        // for (Map.Entry<String, Integer> entry : edges.entrySet()) {
+        //     System.out.printf("%s - ColIndex: %s | ", entry.getKey(), entry.getValue());
+        // }
+        // System.out.println();
+        // System.out.println("Vertex:");
+        // for (Map.Entry<String, Integer> vert : vertex.entrySet()) {
+        //     System.out.printf("%s - RowIndex: %s | ", vert.getKey(), vert.getValue());
+        // }
+        // System.out.println();
+        // for(int i = 0; i < weights.length; i++) {
+        //     System.out.print("[");
+        //     for(int j = 0; j < weights[i].length; j++) {
+        //         System.out.printf("%3d ", weights[i][j]);
+        //     }
+        //     System.out.println("]");
+        // }
         /* Print all of the edges */
         for (Map.Entry<String, Integer> entry : edges.entrySet()) {
             String key = entry.getKey();
