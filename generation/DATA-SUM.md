@@ -1,0 +1,79 @@
+adjlist: REMOVE GraphH_1k.csv : 17943
+adjlist: REMOVE GraphH_3k.csv : 26293
+adjlist: REMOVE GraphH_5k.csv : 30401
+adjlist: REMOVE GraphL_1k.csv : 15666
+adjlist: REMOVE GraphL_3k.csv : 23764
+adjlist: REMOVE GraphL_5k.csv : 16863
+adjlist: REMOVE GraphM_1k.csv : 16454
+adjlist: REMOVE GraphM_3k.csv : 20591
+adjlist: REMOVE GraphM_5k.csv : 21868
+
+incmat: REMOVE GraphH_1k.csv : 179918
+incmat: REMOVE GraphH_3k.csv : 732688
+incmat: REMOVE GraphH_5k.csv : 1368356
+incmat: REMOVE GraphL_1k.csv : 75471
+incmat: REMOVE GraphL_3k.csv : 176173
+incmat: REMOVE GraphL_5k.csv : 323980
+incmat: REMOVE GraphM_1k.csv : 90659
+incmat: REMOVE GraphM_3k.csv : 278256
+incmat: REMOVE GraphM_5k.csv : 552735
+
+adjlist: UPDATE GraphH_1k.csv : 8160
+adjlist: UPDATE GraphH_3k.csv : 6875
+adjlist: UPDATE GraphH_5k.csv : 7343
+adjlist: UPDATE GraphL_1k.csv : 7761
+adjlist: UPDATE GraphL_3k.csv : 7644
+adjlist: UPDATE GraphL_5k.csv : 7729
+adjlist: UPDATE GraphM_1k.csv : 7579
+adjlist: UPDATE GraphM_3k.csv : 5724
+adjlist: UPDATE GraphM_5k.csv : 6463
+
+incmat: UPDATE GraphH_1k.csv : 1818
+incmat: UPDATE GraphH_3k.csv : 1502
+incmat: UPDATE GraphH_5k.csv : 1461
+incmat: UPDATE GraphL_1k.csv : 2915
+incmat: UPDATE GraphL_3k.csv : 1822
+incmat: UPDATE GraphL_5k.csv : 1941
+incmat: UPDATE GraphM_1k.csv : 2280
+incmat: UPDATE GraphM_3k.csv : 1747
+incmat: UPDATE GraphM_5k.csv : 1464
+
+adjlist: ON GraphH_1k.csv : 10251
+adjlist: ON GraphH_3k.csv : 14266
+adjlist: ON GraphH_5k.csv : 62336
+adjlist: ON GraphL_1k.csv : 18565
+adjlist: ON GraphL_3k.csv : 9128
+adjlist: ON GraphL_5k.csv : 9590
+adjlist: ON GraphM_1k.csv : 14996
+adjlist: ON GraphM_3k.csv : 9203
+adjlist: ON GraphM_5k.csv : 7842
+
+incmat: ON GraphH_1k.csv : 620243
+incmat: ON GraphH_3k.csv : 15972757
+incmat: ON GraphH_5k.csv : 55585662
+incmat: ON graphL_1k.csv : 29215
+incmat: ON graphL_3k.csv : 35251
+incmat: ON graphL_5k.csv : 40469
+incmat: ON graphM_1k.csv : 95014
+incmat: ON graphM_3k.csv : 37490
+incmat: ON graphM_5k.csv : 74155
+
+adjlist: IN GraphH_1k.csv : 47689
+adjlist: IN GraphH_3k.csv : 194461
+adjlist: IN GraphH_5k.csv : 1080738
+adjlist: IN GraphL_1k.csv : 27365
+adjlist: IN GraphL_3k.csv : 169883
+adjlist: IN GraphL_5k.csv : 95023
+adjlist: IN GraphM_1k.csv : 31713
+adjlist: IN GraphM_3k.csv : 87501
+adjlist: IN GraphM_5k.csv : 166749
+
+incmat: IN graphH_1k.csv : 54164
+incmat: IN graphH_3k.csv : 112886
+incmat: IN graphH_5k.csv : 199099
+incmat: IN GraphL_1k.csv : 32495
+incmat: IN GraphL_3k.csv : 52457
+incmat: IN GraphL_5k.csv : 62958
+incmat: IN GraphM_1k.csv : 47886
+incmat: IN GraphM_3k.csv : 65897
+incmat: IN GraphM_5k.csv : 795377
