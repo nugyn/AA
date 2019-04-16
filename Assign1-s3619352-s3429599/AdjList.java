@@ -28,9 +28,20 @@ public class AdjList extends AbstractAssocGraph
          */
         Node head = new Node(vertLabel);
         head.setHeader();
-        headers[i] = head;
-        i++;
-        headers = Arrays.copyOf(headers, i+1); 
+        boolean duplicated = false;
+        for(int i = 0; i < headers.length; i++) {
+            /* Check to see if the vertex is already existed. If not then add to the array. */
+            if(headers[i] != null && headers[i].getLabel().equals(vertLabel)) {
+                duplicated = true;
+            }
+        }
+        if(!duplicated) {
+            headers[i] = head;
+            i++;
+            headers = Arrays.copyOf(headers, i+1); 
+        } else {
+            System.out.println("Error: Vertex already exists");
+        }
     } // end of addVertex()
 
     public void addEdge(String srcLabel, String tarLabel, int weight) {
@@ -48,15 +59,29 @@ public class AdjList extends AbstractAssocGraph
             for(int i = 0; i < headers.length - 1; i++) {
                 if(headers[i].getLabel().equals(srcLabel)){
                     Node currNode = headers[i];
-                    while(currNode.getNext() != null) {
+                    boolean duplicated = false;
+                    while(currNode != null) {
                         /* Reach to the end of the linklist */
-                        currNode = currNode.getNext();
+                        if(currNode.getLabel().equals(tarLabel)) {
+                            duplicated = true;
+                            break;
+                        }
+                        if(currNode.getNext() == null) {
+                            break;
+                        } else {
+                            currNode = currNode.getNext();
+                        }
                     }
-                    Node newNode = new Node(tarLabel);
-                    newNode.setWeight(weight);
-                    newNode.setPrev(currNode);
-                    currNode.setNext(newNode); 
-                    break;
+
+                    if(duplicated == false) {
+                        Node newNode = new Node(tarLabel);
+                        newNode.setWeight(weight);
+                        newNode.setPrev(currNode);
+                        currNode.setNext(newNode); 
+                        break;
+                    } else {
+                        System.out.println("Edge is already existed in the vertex");
+                    }
                 }
             }
         } else {
@@ -164,17 +189,21 @@ public class AdjList extends AbstractAssocGraph
 
     public void removeEdge(Node header, String vertLabel) {
         /* Loop throught the the header node and delete vertLabel in its nodes */
-        while(header.getNext()!= null) { 
-            header = header.getNext();
-        }
-        if(header.getLabel().equals(vertLabel) && !header.isHeader()) {
-            Node nextNode = header.getNext();
-            Node prevNode = header.getPrev();
-            if(nextNode != null) {
-                nextNode.setPrev(prevNode);
-                prevNode.setNext(nextNode);
+        while(header!= null) { 
+            if(header.getLabel().equals(vertLabel) && !header.isHeader()) {
+                Node nextNode = header.getNext();
+                Node prevNode = header.getPrev();
+                if(nextNode != null) {
+                    nextNode.setPrev(prevNode);
+                    prevNode.setNext(nextNode);
+                } else {
+                    prevNode.setNext(null);
+                }
+            }
+            if(header.getNext()!=null) {
+                header = header.getNext();
             } else {
-                prevNode.setNext(null);
+                break;
             }
         }
     }

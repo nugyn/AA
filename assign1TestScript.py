@@ -103,7 +103,7 @@ def main():
 
 
     # check implementatoin
-    setValidImpl = set(["adjlist", "adjmat", "sample"])
+    setValidImpl = set(["adjlist", "incmat", "sample"])
     if sImpl not in setValidImpl:
         print >> sys.stderr, sImpl + " is not a valid implementation name."
         sys.exit(1)
